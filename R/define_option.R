@@ -1,23 +1,11 @@
-option_from_name <- function(name, env = parent.frame()) {
-  pkg <- pkgname(env)
-  paste(c(pkg, name), collapse = ".")
-}
-
-envvar_from_name <- function(name, env = parent.frame()) {
-  pkg <- pkgname(env)
-  paste(gsub("[^A-Z0-9]", "_", toupper(c("R", pkg, name))), collapse = "_")
-}
-
-
-
 #' @export
-new_option <- function(x, ...) {
-  UseMethod("new_option")
+define_option <- function(option, ...) {
+  UseMethod("define_option")
 }
 
-#' @exportS3Method new_option character
-new_option.character <- function(
-  x,
+#' @exportS3Method define_option character
+define_option.character <- function(
+  option,
   default = bquote(),
   ...,
   quoted = FALSE,
@@ -26,8 +14,8 @@ new_option.character <- function(
   if (!missing(default) && !quoted)
     default <- match.call()[["default"]]
 
-  new_option(option_spec(
-    name = x,
+  define_option(option_spec(
+    name = option,
     default = default,
     ...,
     quoted = TRUE,
@@ -35,16 +23,16 @@ new_option.character <- function(
   ))
 }
 
-#' @exportS3Method new_option option_spec
-new_option.option_spec <- function(x, ...) {
-  optenv <- get_options_env(x$envir)
-  do.call(delayedAssign, list(x$name, x$expr, x$envir, optenv))
-  set_option_spec(x$name, x, env = optenv)
+#' @exportS3Method define_option option_spec
+define_option.option_spec <- function(option, ...) {
+  optenv <- get_options_env(option$envir)
+  do.call(delayedAssign, list(option$name, option$expr, option$envir, optenv))
+  set_option_spec(option$name, option, env = optenv)
   invisible(optenv)
 }
 
 #' @export
-new_options <- function(...) {
+define_options <- function(...) {
   eval_env <- parent.frame()
   x <- substitute(...())
 
@@ -66,9 +54,9 @@ new_options <- function(...) {
 
   for (i in seq_along(opt_def)) {
     if (inherits(opt_def[[i]], "option_spec")) {
-      new_option(opt_def[[i]], envir = eval_env)
+      define_option(opt_def[[i]], envir = eval_env)
     } else {
-      new_option(option_spec(
+      define_option(option_spec(
         opt_name[[i]],
         default = opt_def[[i]],
         desc = opt_desc[[i]],

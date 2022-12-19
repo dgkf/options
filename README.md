@@ -43,7 +43,7 @@ of how your option behaves.
 
 ```r
 options::define_option(
-  "concrete_example",
+  option = "concrete_example",
   default = TRUE
   desc = paste0(
     "Or, if you prefer a more concrete constructor you can define each option ",
@@ -122,4 +122,28 @@ Or you can reassign documentation to another parameter
 hello <- function(who, silent = opt("quiet")) {
   cat(paste0("Hello, ", who, "!"), "\n")
 }
+```
+
+### Customizing Behaviors
+
+When using `define_option` you can set the `option_name` and `envvar_name` that
+will be used directly.
+
+However, it might be more useful across all options in your package to set a
+global function that will be used to derive option and environment variable
+names for all newly defined options by default.
+
+For this, you can use `set_option_name_fn` and `set_envvar_name_fn`, which each
+accept a function as an argument. This function accepts two arguments, a
+package name and option name, which it uses to produce and return the
+corresponding option or environment variable name.
+
+```r
+options::set_option_name_fn(function(package, name) {
+  tolower(paste0(package, ".", name))
+})
+
+options::set_envvar_name_fn(function(package, name) {
+  gsub("[A-Z0-9]", "_", toupper(paste0(package, "_", name)))
+})
 ```

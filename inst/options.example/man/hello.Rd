@@ -6,9 +6,6 @@
 \usage{
 hello(quiet = opt("quiet"))
 }
-\arguments{
-\item{quiet}{Whether printing should be quiet or loud (Defaults to \code{NULL}, overwritable using option 'options.example.quiet' or environment variable 'R_OPTIONS_EXAMPLE_QUIET')}
-}
 \description{
 We use the stub function above to inherit parameter definitions.
 }

@@ -1,17 +1,34 @@
+default_option_name <- function(package, option) {
+  paste(c(package, option), collapse = ".")
+}
+
+default_envvar_name <- function(package, option) {
+  paste(gsub("[^A-Z0-9]", "_", toupper(c("R", package, option))), collapse = "_")
+}
+
 #' @export
 option_spec <- function(
   name,
   default = bquote(),
   desc = NULL,
-  option_name = option_from_name(name, envir),
-  envvar_name = envvar_from_name(name, envir),
+  option_name = get_option_name_fn(envir),
+  envvar_name = get_envvar_name_fn(envir),
   envvar_fn = fn_with_desc(identity, "raw"),
   quoted = FALSE,
   envir = parent.frame()
 ) {
-  if (missing(default)) {
-  } else if (!quoted) {
+  package <- pkgname(envir)
+
+  if (!missing(default) && !quoted) {
     default <- match.call()[["default"]]
+  }
+
+  if (is.function(option_name)) {
+    option_name <- option_name(package, name)
+  }
+
+  if (is.function(option_name)) {
+    envvar_name <- envvar_name(package, name)
   }
 
   structure(

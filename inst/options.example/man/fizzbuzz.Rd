@@ -11,7 +11,7 @@ fizzbuzz(xs, m1 = 3, m2 = 5, silent = opt("quiet"))
 
 \item{m1}{"buzz" dividend}
 
-\item{silent}{Whether printing should be quiet or loud (Defaults to \code{NULL}, overwritable using option 'options.example.quiet' or environment variable 'R_OPTIONS_EXAMPLE_QUIET')}
+\item{silent}{Whether printing should be quiet or loud (Defaults to \code{NULL}, overwritable using option 'options.example.quiet' or environment variable 'OPTIONS.EXAMPLE_QUIET')}
 }
 \description{
 You can also cherry-pick options that you want to use, or rename them to

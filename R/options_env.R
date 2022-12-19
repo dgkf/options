@@ -66,7 +66,8 @@ set_option_spec <- function(name, details, env = parent.frame()) {
 #' @exportS3Method format options_env
 format.options_env <- function(x, ...) {
   details <- as.list(get_options_specs(x))
-  details[] <- details[order(names(details))]
+  if (length(details))
+    details[] <- details[order(names(details))]
   paste0(lapply(details, format), collapse = "\n\n")
 }
 
