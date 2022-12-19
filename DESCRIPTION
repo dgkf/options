@@ -1,0 +1,23 @@
+Package: options
+Title: Simple, Consistent Package Options
+Version: 0.0.0.9000
+Authors@R:
+    person(
+      "Doug",
+      "Kelkhoff",
+      email = "doug.kelkhoff@gmail.com",
+      role = c("aut", "cre")
+    )
+Description:
+    Simple mechanisms for defining and interpretting package options. Provides
+    helpers for interpretting environment variables, global options, defining
+    default values and more.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Suggests:
+    crayon,
+    roxygen2,
+    testthat
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3

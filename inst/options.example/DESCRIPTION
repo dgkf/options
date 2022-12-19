@@ -1,0 +1,16 @@
+Package: options.example
+Version: 0.0.0.9000
+Title: Showcase of options package
+Description: Showcase of options package
+License: MIT + file LICENSE 
+Authors@R:
+    person(
+      "First", "Last",
+      email = "first.last@example.com",
+      role = c("aut", "cre"),
+    )
+Imports:
+    options
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
