@@ -45,5 +45,7 @@ fizzbuzz <- function(xs, m1 = 3, m2 = 5, silent = opt("quiet")) {
     ifelse(xs %% m2 == 0, "buzz", "")
   )
 
-  if (quiet) out else toupper(out)
+  if (!silent) print(out)
+
+  out
 }

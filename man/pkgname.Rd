@@ -6,7 +6,14 @@
 \usage{
 pkgname(env = parent.frame())
 }
+\arguments{
+\item{env}{An environment in which to search for a package name}
+}
+\value{
+A package name or "globalenv" if not found
+}
 \description{
 Lazily grab \code{packageName()} within calling environment, not within function
 environment.
 }
+\keyword{internal}

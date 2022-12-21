@@ -3,6 +3,20 @@
 \name{options_params}
 \alias{options_params}
 \title{Generated Package Options as Params}
+\arguments{
+\item{detailed}{An example of a more detailed mechanism of defining options, which gives further control over option names, environment variable names and how environment variables are internalized as values. (Defaults to \code{NULL}, overwritable using option 'options.example.detailed' or environment variable 'r_options_example_detailed')}
+
+\item{use_options}{Define options within your package. Using \code{define} shorthand syntax
+will auto-generate global R option names and environment variables names to
+fall back to. (Defaults to \code{NULL}, overwritable using option 'options.example.use_options' or environment variable 'r_options_example_use_options')}
+
+\item{another_option}{Additional options can be chained together. They're also only evaluated
+on first use, so you're free to use package functions without worrying about
+order of execution. (Defaults to \code{NULL}, overwritable using option 'options.example.another_option' or environment variable 'r_options_example_another_option')}
+
+\item{quiet}{Whether printing should be quiet or loud. See how it's used throughout this
+package! (Defaults to \code{NULL}, overwritable using option 'options.example.quiet' or environment variable 'r_options_example_quiet')}
+}
 \description{
 Here we create a small stub of a function. It's used to inherit parameters
 from throughout the package. With this function as a basis, you can use

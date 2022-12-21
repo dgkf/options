@@ -18,10 +18,11 @@ environment variable name.}
 \item{env}{An environment in which to search for options settings}
 }
 \value{
-fn
+The callback function \code{fn}
 }
 \description{
-Define Naming Conventions
+Option naming conventions use sensible defaults so that you can get started
+quickly with minimal configuration.
 }
 \section{Functions}{
 \itemize{
@@ -30,3 +31,51 @@ Define Naming Conventions
 \item \code{set_option_name_fn()}: Set a callback function to use to format option names.
 
 }}
+\section{Defaults}{
+
+
+Given a package \code{mypackage} and option \code{myoption}, the default settings
+will generate options and environment variables using the convention:
+
+option:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{mypackage.myoption
+}\if{html}{\out{</div>}}
+
+environment variable:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{R_MYPACKAGE_MYOPTION
+}\if{html}{\out{</div>}}
+
+This convention is intended to track closely with how options and environment
+variables are handled frequently in the wild. Perhaps in contrast to the
+community conventions, an \code{R_} prefix is tacked on to the default environment
+variables. This prefix helps to differentiate environment variables when
+similarly named tools exist outside of the R ecosystem.
+
+To explore alternative conventions see \url{naming_formats}.
+}
+
+\section{Setting Alternative Conventions}{
+
+
+If you choose to use alternative naming conventions, you must set the
+callback function \emph{before} defining options. This is best achieved by
+altering these settings in the file where you define your options.
+
+If you choose to break up your options across multiple files, then it is best
+to define the collate order for your R scripts to ensure that the options are
+consistently configured across operating systems.
+}
+
+\examples{
+set_envvar_name_fn(envvar_name_generic)
+
+set_envvar_name_fn(function(package, name) {
+  toupper(paste("ENV", package, name, sep = "_"))
+})
+
+}
+\seealso{
+naming_formats
+}

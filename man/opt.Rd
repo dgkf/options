@@ -2,15 +2,46 @@
 % Please edit documentation in R/options_get.R
 \name{opt}
 \alias{opt}
-\title{Retrieve option}
+\alias{opt_source}
+\alias{opts}
+\title{Inspecting Option Values}
 \usage{
-opt(x, default = NULL, env = parent.frame())
+opt(x, default, env = parent.frame())
+
+opt_source(x, env = parent.frame())
+
+opts(xs, env = parent.frame())
 }
 \arguments{
-\item{x}{an option name}
+\item{x, xs}{An option name or vector of option names}
 
-\item{default}{a default value if the option is not set}
+\item{default}{A default value if the option is not set}
+
+\item{env}{An environment, namespace or package name to pull options from}
 }
 \description{
-Retrieve option
+Inspecting Option Values
+}
+\section{Functions}{
+\itemize{
+\item \code{opt()}: Retrieve an option
+
+\item \code{opt_source()}: Determine source of option value
+
+\item \code{opts()}: Retrieve multiple options
+
+}}
+\examples{
+define_options("Whether execution should emit console output", quiet = FALSE)
+opt("quiet")
+
+define_options("Whether execution should emit console output", quiet = FALSE)
+opt_source("quiet")
+
+Sys.setenv(R_GLOBALENV_QUIET = TRUE)
+opt_source("quiet")
+
+options(globalenv.quiet = FALSE)
+opt_source("quiet")
+
 }

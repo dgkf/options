@@ -3,8 +3,14 @@
 #' Lazily grab `packageName()` within calling environment, not within function
 #' environment.
 #'
+#' @param env An environment in which to search for a package name
+#' @return A package name or "globalenv" if not found
+#'
+#' @importFrom utils packageName
+#' @keywords internal
 pkgname <- function(env = parent.frame()) {
-  eval(quote(packageName()), env)
+  pkg <- eval(quote(utils::packageName()), env)
+  if (is.null(pkg)) "globalenv" else pkg
 }
 
 

@@ -4,9 +4,17 @@
 \alias{options}
 \title{options.example Options}
 \usage{
-options("options.example.<option>")
+options::opt("<name>", env = "options.example")
 
-options("options.example.<option>" = <value>)
+options("<option>")
+
+options("<option>" = <value>)
+
+getOption("<option>")
+
+Sys.setenv("<envvar>" = <value>)
+
+Sys.getenv("<envvar>")
 }
 \description{
 Internally used, package-specific options. All options will prioritize R options() values, and fall back to environment variables if undefined. If neither the option nor the environment variable is set, a default value is used.
@@ -15,23 +23,18 @@ Internally used, package-specific options. All options will prioritize R options
 
 \describe{
 \item{detailed}{\describe{
-An example of a more detailed mechanism of defining options, which gives further control over option names, environment variable names and how environment variables are internalized as values.\item{default: }{\preformatted{paste0("tri", "cera", "tops")}}\item{option: }{options.example.detailed}\item{envvar: }{OPTIONS.EXAMPLE_DETAILED (as parsed and evaluated expression)}}}
+An example of a more detailed mechanism of defining options, which gives further control over option names, environment variable names and how environment variables are internalized as values.\item{default: }{\preformatted{FALSE}}\item{option: }{options.example.detailed}\item{envvar: }{r_options_example_detailed (TRUE if set, FALSE otherwise)}}}
 \item{use_options}{\describe{
-Define options within your package. Using \code{define} shorthand syntax will auto-generate global R option names and environment variables names to fall back to.\item{default: }{\preformatted{TRUE}}\item{option: }{options.example.use_options}\item{envvar: }{OPTIONS.EXAMPLE_USE_OPTIONS (raw)}}}
+Define options within your package. Using \code{define} shorthand syntax
+will auto-generate global R option names and environment variables names to
+fall back to.\item{default: }{\preformatted{TRUE}}\item{option: }{options.example.use_options}\item{envvar: }{r_options_example_use_options (as evaluated expression)}}}
 \item{another_option}{\describe{
-Additional options can be chained together. They're also only evaluated on first use, so you're free to use package functions without worrying about order of execution.\item{default: }{\preformatted{exists("a", .GlobalEnv)}}\item{option: }{options.example.another_option}\item{envvar: }{OPTIONS.EXAMPLE_ANOTHER_OPTION (raw)}}}
+Additional options can be chained together. They're also only evaluated
+on first use, so you're free to use package functions without worrying about
+order of execution.\item{default: }{\preformatted{fizzbuzz(1:15)}}\item{option: }{options.example.another_option}\item{envvar: }{r_options_example_another_option (as evaluated expression)}}}
 \item{quiet}{\describe{
-Whether printing should be quiet or loud\item{default: }{\preformatted{FALSE}}\item{option: }{options.example.quiet}\item{envvar: }{OPTIONS.EXAMPLE_QUIET (raw)}}}
-\item{..options_option_fn..}{\describe{
-\item{default: }{\preformatted{function (package, name) 
-{
-    tolower(paste0(package, ".", name))
-}}}}}
-\item{..options_envvar_fn..}{\describe{
-\item{default: }{\preformatted{function (package, name) 
-{
-    toupper(paste0(package, "_", name))
-}}}}}
+Whether printing should be quiet or loud. See how it's used throughout this
+package!\item{default: }{\preformatted{TRUE}}\item{option: }{options.example.quiet}\item{envvar: }{r_options_example_quiet (as evaluated expression)}}}
 }
 }
 

@@ -51,7 +51,7 @@ options::define_option(
   ),
   option_name = "mypackage_concrete", # define custom option names
   envvar_name = "MYPACKAGE_CONCRETE", # and custom environment variable names
-  envvar_fn = pkgoption_fn_is_true()  # and use helpers to handle envvar parsing
+  envvar_fn = envvar_is_true()        # and use helpers to handle envvar parsing
 )
 ```
 
@@ -94,8 +94,11 @@ Options:
 ...
 ```
 
-When your options are used as default values, you can use the option
-documentation to populate your function parameter docs.
+When your options are used as default values to parameters, you can use the
+option documentation to populate your function parameter docs.
+
+This is made simple when all of your parameters share the same names as your
+options.
 
 ```r
 #' @eval options::as_params()
@@ -112,7 +115,10 @@ count_to_three <- function(quiet = opt("quiet")) {
 }
 ```
 
-Or you can reassign documentation to another parameter
+In situations where you have identically named parameters where you _don't_ want
+to inherit the option documentation, you can provide their names to `as_params`
+to use just a subset of options. You can also reassign documentation for an
+option to a parameter of a different name.
 
 ```r
 #' Hello World!
@@ -129,14 +135,14 @@ hello <- function(who, silent = opt("quiet")) {
 When using `define_option` you can set the `option_name` and `envvar_name` that
 will be used directly.
 
-However, it might be more useful across all options in your package to set a
-global function that will be used to derive option and environment variable
-names for all newly defined options by default.
+But it can be tedious and typo-prone to write these out for each and every
+option. Instead, you might consider providing a function that sets the default
+format for your option and environment variable names.
 
 For this, you can use `set_option_name_fn` and `set_envvar_name_fn`, which each
 accept a function as an argument. This function accepts two arguments, a
-package name and option name, which it uses to produce and return the
-corresponding option or environment variable name.
+package name and internal option name, which it uses to produce and return the
+corresponding global option name or environment variable name.
 
 ```r
 options::set_option_name_fn(function(package, name) {
