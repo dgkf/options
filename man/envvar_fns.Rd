@@ -3,11 +3,11 @@
 \name{envvar_fns}
 \alias{envvar_fns}
 \alias{envvar_is}
-\alias{envvar_is.null}
+\alias{envvar_is.NULL}
 \alias{envvar_is.character}
 \alias{envvar_is.numeric}
 \alias{envvar_is.logical}
-\alias{envvar_try_eval}
+\alias{envvar_eval}
 \alias{envvar_eval_or_raw}
 \alias{envvar_is_one_of}
 \alias{envvar_choice_of}
@@ -19,7 +19,7 @@
 \usage{
 envvar_is(value, ...)
 
-\method{envvar_is}{null}(value, case_sensitive = FALSE, ...)
+\method{envvar_is}{`NULL`}(value, case_sensitive = FALSE, ...)
 
 \method{envvar_is}{character}(value, case_sensitive = FALSE, ...)
 
@@ -27,7 +27,7 @@ envvar_is(value, ...)
 
 \method{envvar_is}{logical}(value, case_sensitive = FALSE, ...)
 
-envvar_try_eval(...)
+envvar_eval(...)
 
 envvar_eval_or_raw(...)
 
@@ -71,7 +71,7 @@ them are used to specify behaviors.
 \item \code{envvar_is()}: Test for equality with handlers for most atomic R types, performing sensible
 interpretation of environment variable values.
 
-\item \code{envvar_is(null)}: environment variable has value \code{"null"}
+\item \code{envvar_is(`NULL`)}: environment variable has value \code{"null"}
 
 \item \code{envvar_is(character)}: environment variable is equal to string \code{value}
 
@@ -79,7 +79,7 @@ interpretation of environment variable values.
 
 \item \code{envvar_is(logical)}: environment variable is equal to string representation of logical \code{value}
 
-\item \code{envvar_try_eval()}: Parse the environment variable value as R code and and evaluate it to
+\item \code{envvar_eval()}: Parse the environment variable value as R code and and evaluate it to
 produce a return value, emitting an error if the expression fails to parse
 or evaluate. This option is a sensible default for most R-specific
 environment variables, but may fail for string literals, and meaningful

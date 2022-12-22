@@ -88,10 +88,17 @@ as_roxygen_docs <- function(
 #' @keywords roxygen2
 #' @export
 as_params <- function(...) {
-  env = parent.frame()
+  env <- parent.frame()
   opts <- list(...)
   optenv <- get_options_env(env, inherits = TRUE)
   details <- get_options_spec(optenv)
+
+  if (length(opts) && !(is.character(opts) && all(opts %in% names(optenv)))) {
+    stop(sprintf(
+      "options %s not found.",
+      paste0("'", setdiff(opts, names(optenv)), "'", collapse = ", ")
+    ))
+  }
 
   if (length(opts) == 0)
     opts <- setdiff(names(optenv), CONST_OPTIONS_META)
@@ -106,20 +113,19 @@ as_params <- function(...) {
     optname <- opts[[n]]
     optdetails <- details[[optname]]
 
-    default <- paste0(deparse(optdetails$default), collapse = "; ")
+    default <- paste0(deparse(optdetails$expr), collapse = "; ")
 
     sprintf(
       paste0(
         "@param %s %s (Defaults to `%s`, overwritable using option '%s' or ",
         "environment variable '%s')"),
       n,
-      optdetails$desc,
+      optdetails$desc %||% "From package option",
       default,
       optdetails$option_name,
       optdetails$envvar_name
     )
   }
-
 
   vapply(names(opts), format_param, character(1L))
 }

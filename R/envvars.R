@@ -51,7 +51,7 @@ envvar_is.default <- function(value, ...) {
   fn_with_desc(
     function(raw, ...) {
       tryCatch(
-        identical(value, eval(parse(text = toupper(raw)))),
+        identical(value, eval(parse(text = raw))),
         error = function(e) FALSE
       )
     },
@@ -62,11 +62,11 @@ envvar_is.default <- function(value, ...) {
 #' @describeIn envvar_fns
 #' environment variable has value `"null"`
 #' @export
-envvar_is.null <- function(value, case_sensitive = FALSE, ...) {
+envvar_is.NULL <- function(value, case_sensitive = FALSE, ...) {
   fn_with_desc(
     function(raw, ...) {
       tryCatch(
-        is.null(raw <- eval(parse(text = toupper(raw)))),
+        is.null(eval(parse(text = toupper(raw)))),
         error = function(e) FALSE
       )
     },
@@ -140,7 +140,7 @@ envvar_is.logical <- function(value, case_sensitive = FALSE, ...) {
 #' values that don't conform to R's syntax like `"true`" (see
 #' [envvar_is_true()]), `"false"` (see [envvar_is_false()]) or `"null"`.
 #' @export
-envvar_try_eval <- function(...) {
+envvar_eval <- function(...) {
   fn_with_desc(
     function(raw, name, ...) {
       parse_error_fmt <- paste0(
