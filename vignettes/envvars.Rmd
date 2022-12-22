@@ -1,0 +1,259 @@
+---
+title: "Environment Variables"
+subtitle: Customizing environment variable handling
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{environment_variables}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Environment variables can be a tremendously helpful alternative to options for
+behaviors that one might want to handle ubiquitously across R sessions, that
+might be administered, or that might be needed in a command-line context.
+
+They can provide a helpful interface for supporting tasks that might be called
+during continuous integration jobs, on a compute cluster, or within a
+containerized environment. Since use cases can be hard to predict, `options`
+will consider appropriately named environment variables by default.
+
+# Customizing names
+
+Perhaps the default environment names don't suit you. When defining your
+options, you can always use your own! However, this level of customization is
+only available through the `define_option()` interface.
+
+> By default environment variables look like `R_<PACKAGE>_<OPTION>`
+
+```{r setup}
+library(options)
+```
+
+```{r custom_envvar_name}
+define_option(
+  "volume",
+  default = "shout",
+  desc = "Print output in uppercase ('shout') or lowercase ('whisper')",
+  option_name = "volume",
+  envvar_name = "VOL"
+)
+
+twist_and <- function(what = opt("volume")) {
+  lyric <- paste(
+    "Well, shake it up, baby, now (Shake it up, baby)",
+    "Twist and shout (Twist and shout)",
+    sep = "\n"
+  )
+
+  cat(if (what == "shout") toupper(lyric) else tolower(lyric), "\n")
+}
+```
+
+```{r custom_envvar_ex}
+twist_and()  # by default, "shout"
+```
+
+We can now alter our behavior using the environment variable, `VOL`.
+
+```{r custom_envvar_val, error = TRUE}
+Sys.setenv(VOL = "whisper")
+
+twist_and()  # picks up our environment variable, "whisper"
+```
+
+That's better!
+
+# Setting Naming Rules
+
+Although individually mapping options to environment variables is handy for
+one-off options, it can be tedious to do throughout your package, especially if
+you want all your variables to follow some consistent naming scheme.
+
+For this we can provide a function which is used to name all future options'
+environment variables.
+
+```{r envvar_name_convention}
+set_envvar_name_fn(function(package, name) {
+  gsub("[^A-Z0-9]", "_", toupper(paste0(package, "_", name)))
+})
+```
+
+Now any future option environment variables will use this convention when they
+are defined. Existing options will be unaffected until they are redefined, so
+it's often best to make sure this code runs before you start defining options.
+
+```{r, echo = FALSE}
+Sys.unsetenv("VOL")
+```
+
+```{r redefine_option}
+define_options(
+  "Print output in uppercase ('shout') or lowercase ('whisper')",
+  volume = "shout"
+)
+```
+
+You'll notice that our redefined option now uses our custom naming scheme for
+its environment variable. 
+
+You can always write your own function, or choose from some of the pre-built
+ones in `?naming_formats`.
+
+# Parsing Values
+
+So far we've just been using the environment variable's value as-is. Environment
+variable values, by default, will try to be parsed into R objects. If that
+fails, they'll deliver the raw string value.
+
+This can be a nice default behavior, handling many simple cases as expected
+
++--------------------------------------+---------------------------------------+
+| Environment Variable                 | Default `options` value               |
++======================================+=======================================+
+| `whisper`                            | `[1] "whisper"` (_character_)         |
++--------------------------------------+---------------------------------------+
+| `"shout"`                            | `[1] "shout"` (_character_)           |
++--------------------------------------+---------------------------------------+
+| `12345`                              | `[1] 12345` (_numeric_)               |
++--------------------------------------+---------------------------------------+
+| `TRUE`                               | `[1] TRUE` (_logical_)                |
++--------------------------------------+---------------------------------------+
+| `NULL`                               | `NULL`                                |
++--------------------------------------+---------------------------------------+
+| `list(1, 'a')`                       | ```                                   |
+|                                      | [[1]]                                 |
+|                                      | [1] 1                                 |
+|                                      |                                       |
+|                                      | [[2]]                                 |
+|                                      | [1] "a"                               |
+|                                      |                                       |
+|                                      | ```                                   |
++--------------------------------------+---------------------------------------+
+| `list(1, 'a',)` (_error!_)           | `[1] "list(1, 'a',)"` (_character_)   |
++--------------------------------------+---------------------------------------+
+
+But you'll notice that a typo in our last example completely changed the type of
+data that is read in. Depending on the way that you intend to use this variable,
+perhaps this default is more error-prone than necessary.
+
+To help with this, there is a whole family of functions that allow you to
+customize the way that environment variables are internalized as option values
+(`?envvar_fns`). Generally, it's best to keep these specific to the data type of
+the option that you intend to use - for example, using `envvar_is_true` to
+always coerce the value to a logical scalar. 
+
+Just like before, these are used to specify your option's behaviors:
+
+```{r, echo = FALSE}
+Sys.unsetenv("VOL")
+```
+
+```{r define_envvar_fn}
+define_option(
+  "volume",
+  default = TRUE,
+  desc = "Print output in uppercase (TRUE) or lowercase (FALSE)",
+  envvar_fn = envvar_is_true()
+)
+```
+
+Of course you can define this function however you like.
+
+# Example
+
+Let's put it all together. We'll customize our environment variable name, and
+provide a custom `envvar_fn` which handles how we interpret the raw environment
+variable value.
+
+```{r, echo = FALSE}
+Sys.unsetenv("VOL")
+```
+
+```{r define_envvar_fn_2}
+define_option(
+  "volume",
+  default = 1,
+  desc = paste0(
+    "Print output in uppercase (shout) or lowercase (whisper), or any ",
+    "number from 1-10 for random uppercasing"
+  ),
+  envvar_name = "VOL",
+  envvar_fn = function(raw, ...) {
+    choice_of_nums <- envvar_choice_of(1:11)
+    switch(raw, shout = 10, whisper = 1, choice_of_nums(raw))
+  }
+)
+```
+
+> Note that the `?envvar_fns` family of functions, like `envvar_choice_of()`
+> return _functions_. Although this is a very powerful mechanism of customizing
+> behaviors, it can look odd at first glance. 
+>
+> We first generate our function by giving it which values to choose from
+> (`envvar_choice_of(1:11)`), then use that function when we have our raw value
+> (`choice_of_nums(raw)`).
+
+Now we need to update our `twist_and` function to work with our newly consistent
+numeric volumes.
+
+```{r twist_and_eleven}
+twist_and_shout <- function(vol = opt("volume")) {
+  lyric <- c(
+    "Well, shake it up, baby, now (Shake it up, baby)",
+    "Twist and shout (Twist and shout)"
+  )
+
+  # handle case where volume knob is broken
+  if (is.null(vol)) stop("someone turned off the stereo")
+
+  # randomly uppercase characters to match volume
+  lyric <- strsplit(tolower(lyric), "")
+  lyric <- lapply(lyric, function(line) {
+    char_sample <- runif(nchar(line)) < (vol - 1) / 9
+    line[char_sample] <- toupper(line[char_sample])
+    paste0(line, collapse = "")
+  })
+
+  # in case someone turns it up to 11
+  if (vol == 11) lyric <- gsub("(\\s*\\(|\\))", "!!!\\1", lyric)
+
+  cat(paste(lyric, collapse = "\n"), "\n")
+}
+```
+
+Let's try it out!
+
+```{r}
+Sys.setenv(VOL = "whisper")
+twist_and_shout()
+```
+
+```{r}
+Sys.setenv(VOL = 5)
+twist_and_shout()
+```
+
+```{r}
+Sys.setenv(VOL = "shout")
+twist_and_shout()
+```
+
+```{r}
+Sys.setenv(VOL = 11)
+twist_and_shout()
+```
+
+```{r, error = TRUE}
+Sys.setenv(VOL = "off")  # parsed as NULL
+twist_and_shout()
+```
+
+Looks pretty good! We handle just the inputs we want, without having to worry
+about unexpected data slipping into our R code.

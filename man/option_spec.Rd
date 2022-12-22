@@ -10,7 +10,7 @@ option_spec(
   desc = NULL,
   option_name = get_option_name_fn(envir),
   envvar_name = get_envvar_name_fn(envir),
-  envvar_fn = envvar_try_eval(),
+  envvar_fn = envvar_eval_or_raw(),
   quoted = FALSE,
   eager = FALSE,
   envir = parent.frame()
@@ -40,7 +40,7 @@ functions which fall back to \code{option_name_default} and
 and \code{set_envvar_name_fn}.}
 
 \item{envvar_fn}{A function to use for parsing environment variable values.
-Defaults to \code{envvar_try_eval()}.}
+Defaults to \code{envvar_eval_or_raw()}.}
 
 \item{quoted}{A logical value indicating whether the \code{default} argument
 should be treated as a quoted expression or as a value.}

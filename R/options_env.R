@@ -111,7 +111,8 @@ set_option_spec <- function(name, details, env = parent.frame()) {
 #'
 #' @return A formatted character value
 #'
-#' @export
+#' @keywords internal
+#' @exportS3Method format options_env
 format.options_env <- function(x, ..., fmt = options_fmts()) {
   spec <- get_options_spec(x)
   values <- opts(names(spec), env = x)
@@ -124,7 +125,7 @@ format.options_env <- function(x, ..., fmt = options_fmts()) {
   paste0(formatted_spec, collapse = "\n\n")
 }
 
-#' @export
+#' @exportS3Method print options_env
 print.options_env <- function(x, ...) {
   cat("\n", format(x, ...), "\n\n", sep = "")
 }

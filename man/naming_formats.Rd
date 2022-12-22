@@ -43,3 +43,4 @@ when you're confident that your R package will not conflict with other tools.
 
 }}
 \concept{naming_formats}
+\keyword{naming_formats}

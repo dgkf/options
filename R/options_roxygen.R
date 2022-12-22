@@ -13,6 +13,7 @@
 #' NULL
 #'
 #' @family options_roxygen2
+#' @keywords roxygen2
 #' @importFrom utils packageName
 #' @export
 as_roxygen_docs <- function(
@@ -84,6 +85,7 @@ as_roxygen_docs <- function(
 #' }
 #'
 #' @family options_roxygen2
+#' @keywords roxygen2
 #' @export
 as_params <- function(...) {
   env = parent.frame()

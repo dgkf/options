@@ -34,3 +34,4 @@ Other options_roxygen2:
 \code{\link{as_params}()}
 }
 \concept{options_roxygen2}
+\keyword{roxygen2}

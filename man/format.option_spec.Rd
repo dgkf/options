@@ -22,3 +22,4 @@ A formatted character value
 \description{
 Format an option specification
 }
+\keyword{internal}

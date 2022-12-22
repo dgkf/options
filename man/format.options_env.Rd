@@ -19,3 +19,4 @@ A formatted character value
 \description{
 Format an options environment
 }
+\keyword{internal}

@@ -24,7 +24,7 @@
 #'   `envvar_name_default`, and can be configured using `set_option_name_fn`
 #'   and `set_envvar_name_fn`.
 #' @param envvar_fn A function to use for parsing environment variable values.
-#'   Defaults to `envvar_try_eval()`.
+#'   Defaults to `envvar_eval_or_raw()`.
 #' @param quoted A logical value indicating whether the `default` argument
 #'   should be treated as a quoted expression or as a value.
 #' @param eager A logical value indicating whether the `default` argument should
@@ -45,7 +45,7 @@ option_spec <- function(
   desc = NULL,
   option_name = get_option_name_fn(envir),
   envvar_name = get_envvar_name_fn(envir),
-  envvar_fn = envvar_try_eval(),
+  envvar_fn = envvar_eval_or_raw(),
   quoted = FALSE,
   eager = FALSE,
   envir = parent.frame()
@@ -88,7 +88,7 @@ are_option_spec <- function(x) {
 
 
 
-#' @export
+#' @exportS3Method print option_spec
 print.option_spec <- function(x, ...) {
   cat(format(x, ...))
 }
@@ -105,7 +105,8 @@ print.option_spec <- function(x, ...) {
 #'
 #' @return A formatted character value
 #'
-#' @export
+#' @keywords internal
+#' @exportS3Method format option_spec
 format.option_spec <- function(x, value, ..., fmt = options_fmts()) {
   if (!is.null(x$desc)) {
     desc <- paste(collapse = "\n\n", lapply(

@@ -26,7 +26,7 @@ opt <- function(x, default, env = parent.frame()) {
 
   switch(
     opt_source(spec, env = optenv),
-    "envir"   = Sys.getenv(spec$envvar_name),
+    "envir"   = spec$envvar_fn(Sys.getenv(spec$envvar_name), spec$envvar_name),
     "option"  = getOption(spec$option_name),
     "default" = get_option_default_value(x, optenv),
     if (missing(default)) stop(sprintf("option '%s' not found.", x))

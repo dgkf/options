@@ -8,7 +8,9 @@
 \alias{envvar_is.numeric}
 \alias{envvar_is.logical}
 \alias{envvar_try_eval}
+\alias{envvar_eval_or_raw}
 \alias{envvar_is_one_of}
+\alias{envvar_choice_of}
 \alias{envvar_is_true}
 \alias{envvar_is_false}
 \alias{envvar_is_set}
@@ -27,7 +29,11 @@ envvar_is(value, ...)
 
 envvar_try_eval(...)
 
+envvar_eval_or_raw(...)
+
 envvar_is_one_of(values, ...)
+
+envvar_choice_of(values, default = NULL, ...)
 
 envvar_is_true(...)
 
@@ -77,8 +83,15 @@ environment variables, but may fail for string literals, and meaningful
 values that don't conform to R's syntax like \verb{"true}" (see
 \code{\link[=envvar_is_true]{envvar_is_true()}}), \code{"false"} (see \code{\link[=envvar_is_false]{envvar_is_false()}}) or \code{"null"}.
 
+\item \code{envvar_eval_or_raw()}: Parse the environment variable value as R code and and evaluate it to
+produce a return value, or falling back to the raw value as a string if an
+error occurs.
+
 \item \code{envvar_is_one_of()}: For meaningful string comparisons, check whether the environment variable is
 equal to some meaningful string. Optionally with case-sensitivity.
+
+\item \code{envvar_choice_of()}: Check whether environment variable can be coerced to match one of \code{values},
+returning the value if it matches or \code{default} otherwise.
 
 \item \code{envvar_is_true()}: Test whether the environment variable is "truthy", that is whether it is
 case-insensitive \code{"true"} or \code{1}
@@ -95,3 +108,4 @@ details see \code{\link[=Sys.getenv]{Sys.getenv()}}'s Details about its \code{un
 \code{PATH} variables.
 
 }}
+\keyword{envvar_parsers}

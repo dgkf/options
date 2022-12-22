@@ -1,27 +1,34 @@
-# `options`
+---
+title: "options"
+subtitle: _Simple, Consistent Package Options_
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{options}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
 
-_Simple, Consistent Package Options_
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  eval = FALSE,
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
-If you've exposed options from a package before, you've inevitably re-written
-one or more pieces of trivial boilerplate code:
+R's options are a useful tool for managing global settings. `options` aims to
+make them easy to configure and use, reduce boilerplate code and handle more
+involved options handling so you don't have to.
 
-- Prefixing option names with some sort of package namespace
-- Building your own option documentation
-- Preferentially using a default value, global options or environment variables
-- Parsing of environment variables into useful R data
+# Defining Options
 
-`options` aims to make these things easy, without having to copy around
-boilerplate code.
+While writing your package, we start by defining which options our package might
+use.
 
-## Quick Start
+Define your options using the `define_options()` shorthand. Interlace
+descriptions and default values to define multiple options at once.
 
-### Defining Options
-
-Define your options using the `define_options` shorthand. Interlace descriptions
-and default values to define multiple options at once.
-
-```r
-#' @import options
+```{r defining_options}
 options::define_options(
   "This is an example of how a package author would document their internally
   used options. This option could make the package default to executing
@@ -38,10 +45,10 @@ options::define_options(
 )
 ```
 
-When you want more control, you can use `define_option` to declare all aspects
+When you want more control, you can use `define_option()` to declare all aspects
 of how your option behaves. 
 
-```r
+```{r defining_an_option}
 options::define_option(
   option = "concrete_example",
   default = TRUE,
@@ -55,17 +62,19 @@ options::define_option(
 )
 ```
 
-### Documentation
+# Documentation
 
 As long as the options have been created as shown above, documenting your
 options is as easy as adding this small roxygen stub within your package.
 
-```r
+```{r as_roxygen_docs}
 #' @eval options::as_roxygen_docs()
 NULL
 ```
 
-Produces `?mypackage::options`
+Which produces a `?mypackage::options` help page. Moreover, any `options` page
+will show up in an index when using `?options` to search for documentation,
+making it easier to discover which packages have options for you to use.
 
 ```
 mypackage Options
@@ -100,7 +109,7 @@ option documentation to populate your function parameter docs.
 This is made simple when all of your parameters share the same names as your
 options.
 
-```r
+```{r as_params}
 #' @eval options::as_params()
 #' @name options_params
 #'
@@ -120,7 +129,7 @@ to inherit the option documentation, you can provide their names to `as_params`
 to use just a subset of options. You can also reassign documentation for an
 option to a parameter of a different name.
 
-```r
+```{r as_params_renamed}
 #' Hello World!
 #'
 #' @eval options::as_params("silent" = "quiet")
@@ -130,7 +139,7 @@ hello <- function(who, silent = opt("quiet")) {
 }
 ```
 
-### Customizing Behaviors
+# Customizing Behaviors
 
 When using `define_option` you can set the `option_name` and `envvar_name` that
 will be used directly.
@@ -144,7 +153,7 @@ accept a function as an argument. This function accepts two arguments, a
 package name and internal option name, which it uses to produce and return the
 corresponding global option name or environment variable name.
 
-```r
+```{r set_name_fn}
 options::set_option_name_fn(function(package, name) {
   tolower(paste0(package, ".", name))
 })

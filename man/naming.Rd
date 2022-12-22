@@ -79,3 +79,4 @@ set_envvar_name_fn(function(package, name) {
 \seealso{
 naming_formats
 }
+\keyword{naming}

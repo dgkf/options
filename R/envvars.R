@@ -32,6 +32,8 @@ envvar_fn_emit_warning <- function(name) {
 #' @name envvar_fns
 #' @rdname envvar_fns
 #'
+#' @keywords envvar_parsers
+#'
 NULL
 
 #' @describeIn envvar_fns
@@ -154,6 +156,20 @@ envvar_try_eval <- function(...) {
 }
 
 #' @describeIn envvar_fns
+#' Parse the environment variable value as R code and and evaluate it to
+#' produce a return value, or falling back to the raw value as a string if an
+#' error occurs.
+#' @export
+envvar_eval_or_raw <- function(...) {
+  fn_with_desc(
+    function(raw, name, ...) {
+      tryCatch(eval(parse(text = raw)), error = function(e) raw)
+    },
+    "evaluated if possible, raw string otherwise"
+  )
+}
+
+#' @describeIn envvar_fns
 #' For meaningful string comparisons, check whether the environment variable is
 #' equal to some meaningful string. Optionally with case-sensitivity.
 #' @export
@@ -175,6 +191,31 @@ envvar_is_one_of <- function(values, ...) {
         if (isTRUE(fn(v)(raw, ...))) return(TRUE)
       }
       FALSE
+    },
+    msg
+  )
+}
+
+#' @describeIn envvar_fns
+#' Check whether environment variable can be coerced to match one of `values`,
+#' returning the value if it matches or `default` otherwise.
+#' @export
+envvar_choice_of <- function(values, default = NULL, ...) {
+  msg <- sprintf(
+    "%s as value, NULL otherwise",
+    if (length(values) == 1) {
+      paste0("'", values[[1]], "'")
+    } else {
+      paste0("one of ", paste0("'", as.character(values), "'", collapse = ", "))
+    }
+  )
+
+  fn <- function(v) do.call(envvar_is, list(v, ...))
+
+  fn_with_desc(
+    function(raw, ...) {
+      for (value in values) if (fn(value)(raw, ...)) return(value)
+      default
     },
     msg
   )

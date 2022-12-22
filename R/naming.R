@@ -54,6 +54,7 @@
 #' @seealso naming_formats
 #' @name naming
 #'
+#' @keywords naming
 NULL
 
 #' @describeIn naming
@@ -99,6 +100,7 @@ get_envvar_name_fn <- function(env = parent.frame()) {
 #'   variable name
 #'
 #' @name naming_formats
+#' @keywords naming_formats
 NULL
 
 #' @usage option_name_default(package, option)  # "package.option"
