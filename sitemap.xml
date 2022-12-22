@@ -31,10 +31,16 @@
     <loc>/reference/as_roxygen_docs.html</loc>
   </url>
   <url>
+    <loc>/reference/assert_naming_fn_signature.html</loc>
+  </url>
+  <url>
     <loc>/reference/defining_options.html</loc>
   </url>
   <url>
     <loc>/reference/envvar_fns.html</loc>
+  </url>
+  <url>
+    <loc>/reference/err.html</loc>
   </url>
   <url>
     <loc>/reference/format.option_spec.html</loc>

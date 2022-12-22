@@ -86,10 +86,31 @@ customization of all option behaviors. Accepts either an <code><a href="option_s
 object, or an option named followed by arguments to provide to
 <code><a href="option_spec.html">option_spec()</a></code>.</p></li>
 <li><p><code>define_options()</code>: Define multiple options. This function provides a shorthand syntax for
-succinctly defining many options, using default behaviors. It expects
-pairs of arguments, one unnamed argument with a description of each option
-followed by a named argument providing the name and default value.</p></li>
+succinctly defining many options. Arguments are defined in groups, each
+starting with an unnamed description argument. For more details see Section
+<em>Non-Standard Evaluation</em>.</p></li>
 </ul></div>
+    <div class="section level2">
+    <h2 id="non-standard-evaluation">Non-Standard Evaluation<a class="anchor" aria-label="anchor" href="#non-standard-evaluation"></a></h2>
+    
+
+
+<p><code>define_options()</code> accepts arguments in a <em>non-standard</em>
+way, as groups of arguments which each are used to specify an option (See
+<code>options_spec()</code>). Groups of arguments must start with an unnamed argument,
+which provides the description for the argument, followed immediately by a
+named argument providing the name of option and default value, followed by
+any additional arguments to provie to <code>options_spec()</code>.</p>
+<p>The environment in which options are defined is always assumed to be the
+parent environment. If you'd prefer to specify options in a different
+environment, this is best done using <code>define_option()</code> or
+<code>with(&lt;env&gt;, define_options(...))</code>.</p>
+<p>Although <code>define_options()</code> provides all the functionality of
+<code>define_option()</code> in a succinct shorthand, it is only recommended in cases
+where the overwhelming majority of your options leverage default behaviors.
+It is encouraged to use <code>define_option()</code> if you repeatedly need more
+involved definitions to minimize non-standard evaluation bugs.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -97,8 +118,10 @@ followed by a named argument providing the name and default value.</p></li>
 <span class="r-in"><span>  <span class="st">"Whether execution should emit console output"</span>,</span></span>
 <span class="r-in"><span>  quiet <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="st">"Whether to use detailed console output"</span>,</span></span>
-<span class="r-in"><span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span>  <span class="st">"Whether to use detailed console output (showcasing additional</span></span></span>
+<span class="r-in"><span><span class="st">  configuration parameters)"</span>,</span></span>
+<span class="r-in"><span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  envvar_fn <span class="op">=</span> <span class="fu"><a href="envvar_fns.html">envvar_is_true</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold; font-style: italic;">quiet</span> = <span style="color: #0000BB; font-style: italic;">FALSE</span></span>
@@ -109,13 +132,14 @@ followed by a named argument providing the name and default value.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;"> </span>envvar <span style="color: #555555;"> : </span><span style="color: #00BBBB;">R_GLOBALENV_QUIET</span> (evaluated if possible, raw string otherwise)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;">*</span><span style="color: #00BB00;">default</span><span style="color: #555555;"> : </span>FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold; font-style: italic;">verbose</span> = <span style="color: #0000BB; font-style: italic;">FALSE</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold; font-style: italic;">verbose</span> = <span style="color: #0000BB; font-style: italic;">TRUE</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Whether to use detailed console output</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Whether to use detailed console output (showcasing additional</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   configuration parameters)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;"> </span>option <span style="color: #555555;"> : </span><span style="color: #00BBBB;">globalenv.verbose</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;"> </span>envvar <span style="color: #555555;"> : </span><span style="color: #00BBBB;">R_GLOBALENV_VERBOSE</span> (evaluated if possible, raw string otherwise)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;">*</span><span style="color: #00BB00;">default</span><span style="color: #555555;"> : </span>FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;"> </span>envvar <span style="color: #555555;"> : </span><span style="color: #00BBBB;">R_GLOBALENV_VERBOSE</span> (TRUE if one of 'TRUE', '1', FALSE otherwise)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;">*</span><span style="color: #00BB00;">default</span><span style="color: #555555;"> : </span>TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">define_option</span><span class="op">(</span></span></span>
@@ -134,13 +158,14 @@ followed by a named argument providing the name and default value.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;"> </span>envvar <span style="color: #555555;"> : </span><span style="color: #00BBBB;">R_GLOBALENV_QUIET</span> (evaluated if possible, raw string otherwise)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;">*</span><span style="color: #00BB00;">default</span><span style="color: #555555;"> : </span>FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold; font-style: italic;">verbose</span> = <span style="color: #0000BB; font-style: italic;">FALSE</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold; font-style: italic;">verbose</span> = <span style="color: #0000BB; font-style: italic;">TRUE</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Whether to use detailed console output</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Whether to use detailed console output (showcasing additional</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   configuration parameters)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;"> </span>option <span style="color: #555555;"> : </span><span style="color: #00BBBB;">globalenv.verbose</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;"> </span>envvar <span style="color: #555555;"> : </span><span style="color: #00BBBB;">R_GLOBALENV_VERBOSE</span> (evaluated if possible, raw string otherwise)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;">*</span><span style="color: #00BB00;">default</span><span style="color: #555555;"> : </span>FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;"> </span>envvar <span style="color: #555555;"> : </span><span style="color: #00BBBB;">R_GLOBALENV_VERBOSE</span> (TRUE if one of 'TRUE', '1', FALSE otherwise)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;">*</span><span style="color: #00BB00;">default</span><span style="color: #555555;"> : </span>TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold; font-style: italic;">deprecations</span> = <span style="color: #0000BB; font-style: italic;">FALSE</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
