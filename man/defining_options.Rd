@@ -34,18 +34,42 @@ object, or an option named followed by arguments to provide to
 \code{\link[=option_spec]{option_spec()}}.
 
 \item \code{define_options()}: Define multiple options. This function provides a shorthand syntax for
-succinctly defining many options, using default behaviors. It expects
-pairs of arguments, one unnamed argument with a description of each option
-followed by a named argument providing the name and default value.
+succinctly defining many options. Arguments are defined in groups, each
+starting with an unnamed description argument. For more details see Section
+\emph{Non-Standard Evaluation}.
 
 }}
+\section{Non-Standard Evaluation}{
+
+
+\code{define_options()} accepts arguments in a \emph{non-standard}
+way, as groups of arguments which each are used to specify an option (See
+\code{options_spec()}). Groups of arguments must start with an unnamed argument,
+which provides the description for the argument, followed immediately by a
+named argument providing the name of option and default value, followed by
+any additional arguments to provie to \code{options_spec()}.
+
+The environment in which options are defined is always assumed to be the
+parent environment. If you'd prefer to specify options in a different
+environment, this is best done using \code{define_option()} or
+\verb{with(<env>, define_options(...))}.
+
+Although \code{define_options()} provides all the functionality of
+\code{define_option()} in a succinct shorthand, it is only recommended in cases
+where the overwhelming majority of your options leverage default behaviors.
+It is encouraged to use \code{define_option()} if you repeatedly need more
+involved definitions to minimize non-standard evaluation bugs.
+}
+
 \examples{
 define_options(
   "Whether execution should emit console output",
   quiet = FALSE,
 
-  "Whether to use detailed console output",
-  verbose = FALSE
+  "Whether to use detailed console output (showcasing additional
+  configuration parameters)",
+  verbose = TRUE,
+  envvar_fn = envvar_is_true()
 )
 
 define_option(

@@ -57,10 +57,26 @@
 #' @keywords naming
 NULL
 
+
+
+#' Assert signature for naming functions
+#'
+#' @param fn A function to inspect
+#' @return NULL
+#'
+#' @keywords internal
+assert_naming_fn_signature <- function(fn) {
+  if (length(formals(fn)) < 2)
+    err("naming functions must accept at least two arguments", which = -1)
+}
+
+
+
 #' @describeIn naming
 #' Set a callback function to use to format environment variable names.
 #' @export
 set_envvar_name_fn <- function(fn, env = parent.frame()) {
+  assert_naming_fn_signature(fn)
   optenv <- get_options_env(env)
   attr(optenv, "envvar_name_fn") <- fn
 }
@@ -69,6 +85,7 @@ set_envvar_name_fn <- function(fn, env = parent.frame()) {
 #' Set a callback function to use to format option names.
 #' @export
 set_option_name_fn <- function(fn, env = parent.frame()) {
+  assert_naming_fn_signature(fn)
   optenv <- get_options_env(env)
   attr(optenv, "option_name_fn") <- fn
 }

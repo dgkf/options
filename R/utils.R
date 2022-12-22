@@ -15,3 +15,11 @@ pkgname <- function(env = parent.frame()) {
 
 
 `%||%` <- function(lhs, rhs) if (is.null(lhs)) rhs else lhs
+
+vlapply <- function(..., FUN.VALUE = logical(1L)) {
+  vapply(..., FUN.VALUE = FUN.VALUE)
+}
+
+vcapply <- function(..., FUN.VALUE = character(1L)) {
+  vapply(..., FUN.VALUE = FUN.VALUE)
+}
