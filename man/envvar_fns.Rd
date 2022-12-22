@@ -53,6 +53,9 @@ should be case-sensitive.}
 
 \item{values}{A list or vector of values to match}
 
+\item{default}{A default value used when a value cannot be coerced from the
+environment variable value}
+
 \item{delim}{A character value to use as a delimiter to use when splitting
 the environment variable value}
 }

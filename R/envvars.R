@@ -22,6 +22,8 @@ envvar_fn_emit_warning <- function(name) {
 #'
 #' @param value A value to test against
 #' @param values A list or vector of values to match
+#' @param default A default value used when a value cannot be coerced from the
+#'   environment variable value
 #' @param case_sensitive A logical value indicating whether string comparisons
 #'   should be case-sensitive.
 #' @param delim A character value to use as a delimiter to use when splitting

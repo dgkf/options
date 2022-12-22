@@ -2,6 +2,12 @@
 
 _Simple, Consistent Package Options_
 
+[![CRAN](https://img.shields.io/cran/v/options.svg)](https://cran.r-project.org/package=options)
+[![downloads](https://cranlogs.r-pkg.org/badges/options)](https://cran.r-project.org/package=options)
+[![R CMD
+check](https://github.com/dgkf/options/workflows/R-CMD-check/badge.svg)](https://github.com/dgkf/options/actions?query=workflow%3AR-CMD-check)
+[![Codecov](https://img.shields.io/codecov/c/github/dgkf/options/master.svg)](https://app.codecov.io/gh/dgkf/options)
+
 If you've exposed options from a package before, you've inevitably re-written
 one or more pieces of trivial boilerplate code:
 
