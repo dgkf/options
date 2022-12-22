@@ -27,14 +27,14 @@ An example of a more detailed mechanism of defining options, which gives further
 \item{use_options}{\describe{
 Define options within your package. Using \code{define} shorthand syntax
 will auto-generate global R option names and environment variables names to
-fall back to.\item{default: }{\preformatted{TRUE}}\item{option: }{options.example.use_options}\item{envvar: }{r_options_example_use_options (as evaluated expression)}}}
+fall back to.\item{default: }{\preformatted{TRUE}}\item{option: }{options.example.use_options}\item{envvar: }{r_options_example_use_options (evaluated if possible, raw string otherwise)}}}
 \item{another_option}{\describe{
 Additional options can be chained together. They're also only evaluated
 on first use, so you're free to use package functions without worrying about
-order of execution.\item{default: }{\preformatted{fizzbuzz(1:15)}}\item{option: }{options.example.another_option}\item{envvar: }{r_options_example_another_option (as evaluated expression)}}}
+order of execution.\item{default: }{\preformatted{fizzbuzz(1:15)}}\item{option: }{options.example.another_option}\item{envvar: }{r_options_example_another_option (evaluated if possible, raw string otherwise)}}}
 \item{quiet}{\describe{
 Whether printing should be quiet or loud. See how it's used throughout this
-package!\item{default: }{\preformatted{TRUE}}\item{option: }{options.example.quiet}\item{envvar: }{r_options_example_quiet (as evaluated expression)}}}
+package!\item{default: }{\preformatted{TRUE}}\item{option: }{options.example.quiet}\item{envvar: }{r_options_example_quiet (evaluated if possible, raw string otherwise)}}}
 }
 }
 
