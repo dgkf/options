@@ -1,7 +1,6 @@
 url: ~
 template:
   bootstrap: 5
-  bootswatch: pulse
 
 reference:
   - title: Accessing Options
