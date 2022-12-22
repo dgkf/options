@@ -25,10 +25,7 @@ err <- function(title, issues = list(), which = 0) {
 
   title <- paste0("  ", title)
   stop(structure(
-    list(
-      message = paste0(c("", title, issues), collapse = "\n"),
-      call = call,
-    ),
+    list(message = paste0(c("", title, issues), collapse = "\n"), call = call),
     class = c("options_error", "error", "condition")
   ))
 }
