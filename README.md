@@ -1,4 +1,4 @@
-# `options` <img src="https://user-images.githubusercontent.com/18220321/209275790-2ad3e2de-61a3-485b-a8c5-459b4fd88540.png" align="right" width="134px"/>
+# `options` <img src="https://user-images.githubusercontent.com/18220321/209400199-83fa56f3-36b1-46bc-b2c4-362bb78acd87.png" align="right" width="134px"/>
 
 [![CRAN](https://img.shields.io/cran/v/options.svg)](https://cran.r-project.org/package=options)
 [![downloads](https://cranlogs.r-pkg.org/badges/options)](https://cran.r-project.org/package=options)
