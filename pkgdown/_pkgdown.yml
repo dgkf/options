@@ -1,6 +1,14 @@
 url: ~
 template:
   bootstrap: 5
+  theme: arrow-light #atom-one-light
+  bslib: 
+    fg: "#404040"
+    bg: "#F4F4F4"
+    primary: "#fa3939"
+
+navbar:
+  bg: primary
 
 reference:
   - title: Accessing Options

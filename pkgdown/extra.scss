@@ -1,0 +1,44 @@
+body {
+  --bs-code-color: rgba(var(--bs-primary-rgb), 0.8);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @extend %headings !optional;
+}
+
+%headings {
+  margin-top: 1rem;
+}
+
+pre {
+  padding: 1rem;
+  background: #fefbfa;
+  border-style: none none none solid;
+  border-color: rgba(var(--bs-primary-rgb), 0.6);
+  border-radius: 0;
+  border-width: 0.2em;
+}
+
+.navbar-dark {
+  --bs-navbar-color: rgba(var(--bs-body-bg-rgb), 0.8);
+  --bs-navbar-hover-color: rgba(var(--bs-body-bg-rgb), 1.0);
+}
+
+.navbar-dark .navbar-nav .active > .nav-link {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.navbar-dark .navbar-nav .active > .nav-link:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.text-muted {
+  color: rgba(var(--bs-body-bg-rgb), 0.6) !important;
+}
+
+.navbar-dark input[type="search"] {
+  border: none;
+  border-radius: 0.1em;
+  background-color: rgba(var(--bs-body-bg-rgb), 0.8);
+  color: rgba(var(--bs-primary-rgb), 0.6);
+}
