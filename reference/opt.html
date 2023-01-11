@@ -82,10 +82,24 @@
 
 </dl></div>
     <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    
+
+<p>For <code>opt()</code> and <code>opts()</code>; the result of the option (or a list of
+results), either the value from a global option, the result of processing
+the environment variable or the default value, depending on which of the
+alternative sources are defined.</p>
+
+
+<p>For <code>opt_source()</code>; the source that is used for a specific option,
+one of <code>"option"</code>, <code>"envir"</code> or <code>"default"</code>.</p>
+    </div>
+    <div class="section level2">
     <h2 id="functions">Functions<a class="anchor" aria-label="anchor" href="#functions"></a></h2>
     
 <ul><li><p><code>opt()</code>: Retrieve an option</p></li>
-<li><p><code>opt_source()</code>: Determine source of option value</p></li>
+<li><p><code>opt_source()</code>: Determine source of option value. Primarily used for diagnosing options
+behaviors.</p></li>
 <li><p><code>opts()</code>: Retrieve multiple options</p></li>
 </ul></div>
 
