@@ -4,6 +4,7 @@
 [![downloads](https://cranlogs.r-pkg.org/badges/options)](https://cran.r-project.org/package=options)
 [![R CMD check](https://github.com/dgkf/options/actions/workflows/check-full.yaml/badge.svg)](https://github.com/dgkf/options/actions/workflows/check-full.yaml)
 [![Codecov](https://img.shields.io/codecov/c/github/dgkf/options/master.svg)](https://app.codecov.io/gh/dgkf/options)
+[![Matrix Space](https://img.shields.io/matrix/r-pkg-options:matrix.org)](https://matrix.to/#/#r-pkg-options:matrix.org)
 
 _Simple, Consistent Package Options_
 
