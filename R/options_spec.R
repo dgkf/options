@@ -6,8 +6,8 @@
 #' behavior of the option.
 #'
 #' @param name A string representing the internal name for the option. This is
-#'   the short form "<option>" used within a namespace and relates to, for
-#'   example, "<package>.<option>" global R option.
+#'   the short form `<option>` used within a namespace and relates to, for
+#'   example, `<package>.<option>` global R option.
 #' @param default Either a quoted expression (if parameter `quote == TRUE`) or
 #'   default value for the option.  Defaults to an empty expression, indicating
 #'   that it is unset. The default value is lazily evaluated, evaluated only

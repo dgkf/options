@@ -18,8 +18,8 @@ option_spec(
 }
 \arguments{
 \item{name}{A string representing the internal name for the option. This is
-the short form "\if{html}{\out{<option>}}" used within a namespace and relates to, for
-example, "\if{html}{\out{<package>}}.\if{html}{\out{<option>}}" global R option.}
+the short form \verb{<option>} used within a namespace and relates to, for
+example, \verb{<package>.<option>} global R option.}
 
 \item{default}{Either a quoted expression (if parameter \code{quote == TRUE}) or
 default value for the option.  Defaults to an empty expression, indicating

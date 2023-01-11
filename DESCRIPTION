@@ -9,15 +9,15 @@ Authors@R:
       role = c("aut", "cre")
     )
 Description:
-    Simple mechanisms for defining and interpretting package options. Provides
-    helpers for interpretting environment variables, global options, defining
+    Simple mechanisms for defining and interpreting package options. Provides
+    helpers for interpreting environment variables, global options, defining
     default values and more.
 License:
     MIT + file LICENSE
 URL:
-    https://dgkf.github.io/options,
+    https://dgkf.github.io/options/,
     https://github.com/dgkf/options
-BugReports: 
+BugReports:
     https://github.com/dgkf/options/issues
 Imports:
     utils

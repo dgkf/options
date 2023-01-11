@@ -19,6 +19,15 @@ opts(xs, env = parent.frame())
 
 \item{env}{An environment, namespace or package name to pull options from}
 }
+\value{
+For \code{opt()} and \code{opts()}; the result of the option (or a list of
+results), either the value from a global option, the result of processing
+the environment variable or the default value, depending on which of the
+alternative sources are defined.
+
+For \code{opt_source()}; the source that is used for a specific option,
+one of \code{"option"}, \code{"envir"} or \code{"default"}.
+}
 \description{
 Inspecting Option Values
 }
@@ -26,7 +35,8 @@ Inspecting Option Values
 \itemize{
 \item \code{opt()}: Retrieve an option
 
-\item \code{opt_source()}: Determine source of option value
+\item \code{opt_source()}: Determine source of option value. Primarily used for diagnosing options
+behaviors.
 
 \item \code{opts()}: Retrieve multiple options
 

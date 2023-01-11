@@ -26,8 +26,6 @@
 #' variables. This prefix helps to differentiate environment variables when
 #' similarly named tools exist outside of the R ecosystem.
 #'
-#' To explore alternative conventions see [naming_formats]().
-#'
 #' @section Setting Alternative Conventions:
 #'
 #' If you choose to use alternative naming conventions, you must set the
@@ -117,7 +115,10 @@ get_envvar_name_fn <- function(env = parent.frame()) {
 #'   variable name
 #'
 #' @name naming_formats
+#' @seealso naming
+#'
 #' @keywords naming_formats
+#'
 NULL
 
 #' @usage option_name_default(package, option)  # "package.option"

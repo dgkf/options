@@ -42,5 +42,8 @@ when you're confident that your R package will not conflict with other tools.
 (\code{MYPACKAGE_MYOPTION})
 
 }}
+\seealso{
+naming
+}
 \concept{naming_formats}
 \keyword{naming_formats}

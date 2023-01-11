@@ -13,6 +13,11 @@ NULL
 #'
 #' Retrieve an option
 #'
+#' @return For `opt()` and `opts()`; the result of the option (or a list of
+#'   results), either the value from a global option, the result of processing
+#'   the environment variable or the default value, depending on which of the
+#'   alternative sources are defined.
+#'
 #' @examples
 #' define_options("Whether execution should emit console output", quiet = FALSE)
 #' opt("quiet")
@@ -38,7 +43,11 @@ opt <- function(x, default, env = parent.frame()) {
 
 #' @describeIn opt
 #'
-#' Determine source of option value
+#' Determine source of option value. Primarily used for diagnosing options
+#' behaviors.
+#'
+#' @return For `opt_source()`; the source that is used for a specific option,
+#'   one of `"option"`, `"envir"` or `"default"`.
 #'
 #' @examples
 #' define_options("Whether execution should emit console output", quiet = FALSE)
@@ -85,5 +94,12 @@ opt_source <- function(x, env = parent.frame()) {
 #'
 #' @export
 opts <- function(xs, env = parent.frame()) {
+  if (is.null(names(xs))) {
+    names(xs) <- xs
+  } else  {
+    which_unnamed <- names(xs) == ""
+    names(xs)[which_unnamed] <- xs[which_unnamed]
+  }
+
   lapply(xs, opt, env = env)
 }

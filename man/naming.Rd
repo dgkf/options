@@ -52,8 +52,6 @@ variables are handled frequently in the wild. Perhaps in contrast to the
 community conventions, an \code{R_} prefix is tacked on to the default environment
 variables. This prefix helps to differentiate environment variables when
 similarly named tools exist outside of the R ecosystem.
-
-To explore alternative conventions see \url{naming_formats}.
 }
 
 \section{Setting Alternative Conventions}{
