@@ -1,9 +1,9 @@
 # `options` <img src="https://user-images.githubusercontent.com/18220321/209406193-2bdff9aa-6236-4b10-94f8-a2eb8777e11d.png" align="right" width="134px"/>
 
 [![CRAN](https://img.shields.io/cran/v/options.svg)](https://cran.r-project.org/package=options)
-[![downloads](https://cranlogs.r-pkg.org/badges/options)](https://cran.r-project.org/package=options)
 [![R CMD check](https://github.com/dgkf/options/actions/workflows/check-full.yaml/badge.svg)](https://github.com/dgkf/options/actions/workflows/check-full.yaml)
 [![Codecov](https://img.shields.io/codecov/c/github/dgkf/options/master.svg)](https://app.codecov.io/gh/dgkf/options)
+[![downloads](https://cranlogs.r-pkg.org/badges/options)](https://cran.r-project.org/package=options)
 [![Matrix Space](https://img.shields.io/matrix/r-pkg-options:matrix.org)](https://matrix.to/#/#r-pkg-options:matrix.org)
 
 _Simple, Consistent Package Options_
