@@ -1,6 +1,6 @@
 Package: options
 Title: Simple, Consistent Package Options
-Version: 0.0.1
+Version: 0.0.1.9000
 Authors@R:
     person(
       "Doug",
