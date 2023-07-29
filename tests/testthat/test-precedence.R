@@ -1,4 +1,10 @@
 test_that("option, envvar, default precedence is used for option values", {
+  withr::defer({
+    Sys.unsetenv("OPT_A")
+    Sys.unsetenv("OPT_B")
+    options(opt.A = NULL, opt.B = NULL)
+  })
+
   e <- new.env()
   expect_silent(with(e, define_option(
     "A",

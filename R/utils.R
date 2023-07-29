@@ -9,7 +9,7 @@
 #' @importFrom utils packageName
 #' @keywords internal
 pkgname <- function(env = parent.frame()) {
-  pkg <- eval(quote(utils::packageName()), env)
+  pkg <- utils::packageName(env)
   if (is.null(pkg)) "globalenv" else pkg
 }
 

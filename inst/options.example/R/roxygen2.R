@@ -35,7 +35,7 @@ hello <- function(quiet = opt("quiet")) {
 #'
 #' @param xs a numeric vector of values to consider
 #' @param m1 "fizz" dividend
-#' @param m1 "buzz" dividend
+#' @param m2 "buzz" dividend
 #' @eval options::as_params("silent" = "quiet")
 #'
 #' @export

@@ -1,7 +1,7 @@
 test_that("roxygen2-style block is generated from options env object", {
-  e <- new.env()
+  e <- test_env()
 
-  expect_silent(with(e, define_option(
+  expect_silent(with(e, options::define_option(
     "A",
     default = 1,
     option_name = "opt.a",
@@ -16,9 +16,9 @@ test_that("roxygen2-style block is generated from options env object", {
 })
 
 test_that("roxygen2-style params block is generated from as_params", {
-  e <- new.env()
+  e <- test_env()
 
-  expect_silent(with(e, define_option(
+  expect_silent(with(e, options::define_option(
     "A",
     default = 1,
     desc = "my description",
@@ -26,7 +26,7 @@ test_that("roxygen2-style params block is generated from as_params", {
     envvar_name = "OPT_A"
   )))
 
-  expect_silent(block <- paste0(with(e, as_params()), collapse = "\n"))
+  expect_silent(block <- paste0(with(e, options::as_params()), collapse = "\n"))
   expect_match(block, "^@param A")
   expect_match(block, "my description")
   expect_match(block, "Defaults to `1`")

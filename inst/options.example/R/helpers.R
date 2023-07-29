@@ -4,7 +4,7 @@
 #' global options to see how they affect the internally used option value.
 #'
 #' @param x An option name to explore
-#' @inheritParams options::opt
+#' @inheritDotParams options::opt
 #'
 #' @return the option value as it would be discovered inside this package
 #'

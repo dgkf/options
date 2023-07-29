@@ -32,6 +32,10 @@ get_options_env.options_env <- function(env, ...) {
   env
 }
 
+get_options_env.options_list <- function(env, ...) {
+  attr(env, "environment")
+}
+
 get_options_env.default <- function(env, ..., inherits = FALSE) {
   if (!options_initialized(env, inherits = inherits)) {
     init_options_env(env = env)
@@ -63,6 +67,24 @@ init_options_env <- function(env = parent.frame()) {
   )
 
   assign(CONST_OPTIONS_ENV_NAME, optenv, envir = env)
+}
+
+#' @describeIn options_env
+#' Convert into an options list
+as_options_list <- function(x, ...) {
+  UseMethod("as_options_list")
+}
+
+as_options_list.options_env <- function(x, ...) {
+  res <- structure(as.list(x), class = c("options_list", "list"))
+
+  for (attr_name in names(attributes(x))) {
+    if (attr_name %in% names(attributes(res))) next
+    attr(res, attr_name) <- attr(x, attr_name)
+  }
+
+  attr(res, "environment") <- x
+  res
 }
 
 #' @describeIn options_env
@@ -115,17 +137,32 @@ set_option_spec <- function(name, details, env = parent.frame()) {
 #' @exportS3Method format options_env
 format.options_env <- function(x, ..., fmt = options_fmts()) {
   spec <- get_options_spec(x)
-  values <- opts(names(spec), env = x)
+  values <- as.list(x)
 
   formatted_spec <- character(length(spec))
   for (i in seq_along(spec)) {
-    formatted_spec[[i]] <- format(spec[[i]], values[[i]], fmt = fmt)
+    n <- names(spec)[[i]]
+    formatted_spec[[i]] <- format(spec[[n]], values[[n]], fmt = fmt)
   }
 
   paste0(formatted_spec, collapse = "\n\n")
 }
 
+#' Format an options list
+#'
+#' @param x An option list ("option_list") class object
+#' @inheritParams format.options_env
+#'
+#' @return A formatted character value
+#'
+#' @keywords internal
+#' @exportS3Method format options_env
+format.options_list <- format.options_env
+
 #' @exportS3Method print options_env
 print.options_env <- function(x, ...) {
   cat("\n", format(x, ...), "\n\n", sep = "")
 }
+
+#' @exportS3Method print options_list
+print.options_list <- print.options_env

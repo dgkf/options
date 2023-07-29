@@ -1,13 +1,13 @@
 Package: options.example
 Version: 0.0.0.9000
 Title: Showcase of options package
-Description: Showcase of options package
-License: MIT + file LICENSE 
+Description: Showcase of options package.
+License: file LICENSE
 Authors@R:
     person(
-      "First", "Last",
-      email = "first.last@example.com",
-      role = c("aut", "cre"),
+        "authors of `options`",
+        email = "authors@optio.ns",
+        role = c("aut", "cre")
     )
 Imports:
     options

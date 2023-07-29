@@ -1,6 +1,6 @@
 Package: options
 Title: Simple, Consistent Package Options
-Version: 0.0.1.9000
+Version: 0.0.2
 Authors@R:
     person(
       "Doug",
@@ -26,6 +26,7 @@ Suggests:
     knitr,
     rmarkdown,
     roxygen2,
+    rcmdcheck,
     testthat (>= 3.0.0)
 Config/Needs/website:
     pkgdown

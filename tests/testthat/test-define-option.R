@@ -1,11 +1,10 @@
 test_that("define_options accepts multiple option definitions", {
-  e <- new.env()
+  e <- test_env()
 
   expect_silent(with(e, {
-    define_options(
+    options::define_options(
       "option A",
       A = 1,
-
       "option B",
       B = 2
     )
@@ -17,9 +16,9 @@ test_that("define_options accepts multiple option definitions", {
 })
 
 test_that("define_options accepts option_spec parameters", {
-  e <- new.env()
+  e <- test_env()
 
-  expect_silent(with(e, define_options(
+  expect_silent(with(e, options::define_options(
     "this is option A",
     A = 1,
     option_name = "opt_a",
@@ -33,7 +32,7 @@ test_that("define_options accepts option_spec parameters", {
 
 test_that("define_options errors when 'desc' argument is passed", {
   expect_error(
-    with(new.env(), define_options(
+    with(test_env(), options::define_options(
       "this is option A",
       A = 1,
       desc = 10,
@@ -45,7 +44,7 @@ test_that("define_options errors when 'desc' argument is passed", {
 
   # but not when "desc" is the option name
   expect_no_error(
-    with(new.env(), define_options(
+    with(test_env(), options::define_options(
       "this option is for descriptions",
       desc = 10,
       option_name = "opt_a",
@@ -56,7 +55,7 @@ test_that("define_options errors when 'desc' argument is passed", {
 
 test_that("define_options errors when 'name' argument is passed", {
   expect_error(
-    with(new.env(), define_options(
+    with(test_env(), options::define_options(
       "this is option A",
       A = 1,
       name = "A",
@@ -68,7 +67,7 @@ test_that("define_options errors when 'name' argument is passed", {
 
   # but not when "name" is the option name
   expect_no_error(
-    with(new.env(), define_options(
+    with(test_env(), options::define_options(
       "this is option 'name'",
       name = "bob",
       option_name = "opt_a",
@@ -79,7 +78,7 @@ test_that("define_options errors when 'name' argument is passed", {
 
 test_that("define_options errors with empty last argument", {
   expect_error(
-    with(new.env(), define_options(
+    with(test_env(), options::define_options(
       "this is option A",
       A = 1,
     )),
@@ -89,7 +88,7 @@ test_that("define_options errors with empty last argument", {
 
 test_that("define_options errors on multiple consecutive unnamed args", {
   expect_error(
-    with(new.env(), define_options(
+    with(test_env(), options::define_options(
       "this isn't write",
       "this is option A",
       A = 1
@@ -100,7 +99,7 @@ test_that("define_options errors on multiple consecutive unnamed args", {
 
 test_that("define_options error when first argument is named", {
   expect_error(
-    with(new.env(), define_options(
+    with(test_env(), options::define_options(
       A = 1
     )),
     "begin.*description"
@@ -109,21 +108,27 @@ test_that("define_options error when first argument is named", {
 
 test_that("define_options errors report appropriate options", {
   expect_error(
-    with(new.env(), define_options(A = 1, "B", B = 2)),
+    with(test_env(), options::define_options(A = 1, "B", B = 2)),
     "option \\(1\\)"
   )
 
   expect_error(
-    with(new.env(), define_options("A", A = 1, "B", B = 2, desc = "b")),
+    with(test_env(), options::define_options(
+      "A",
+      A = 1,
+      "B",
+      B = 2,
+      desc = "b"
+    )),
     "option \\(2\\)"
   )
 })
 
 test_that("define_option accepts parameterized options specification", {
-  e <- new.env()
+  e <- test_env()
 
   expect_silent(with(e, {
-    define_option(
+    options::define_option(
       "A",
       default = 1,
       desc = "this is option A",
@@ -137,10 +142,10 @@ test_that("define_option accepts parameterized options specification", {
 })
 
 test_that("define_option accepts an option_spec object", {
-  e <- new.env()
+  e <- test_env()
 
   expect_silent(with(e, {
-    define_option(option_spec(
+    options::define_option(options::option_spec(
       "A",
       default = 1,
       desc = "this is option A",

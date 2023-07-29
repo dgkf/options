@@ -9,7 +9,12 @@ fizzbuzz(xs, m1 = 3, m2 = 5, silent = opt("quiet"))
 \arguments{
 \item{xs}{a numeric vector of values to consider}
 
-\item{m1}{"buzz" dividend}
+\item{m1}{"fizz" dividend}
+
+\item{m2}{"buzz" dividend}
+
+\item{silent}{Whether printing should be quiet or loud. See how it's used throughout this
+package! (Defaults to \code{TRUE}, overwritable using option 'options.example.quiet' or environment variable 'r_options_example_quiet')}
 }
 \description{
 You can also cherry-pick options that you want to use, or rename them to

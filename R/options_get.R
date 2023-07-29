@@ -90,16 +90,13 @@ opt_source <- function(x, env = parent.frame()) {
 
 #' @describeIn opt
 #'
-#' Retrieve multiple options
+#' Retrieve multiple options. When no names are provided, return a list
+#'   containing all options from a given environment.
 #'
 #' @export
-opts <- function(xs, env = parent.frame()) {
-  if (is.null(names(xs))) {
-    names(xs) <- xs
-  } else  {
-    which_unnamed <- names(xs) == ""
-    names(xs)[which_unnamed] <- xs[which_unnamed]
-  }
-
-  lapply(xs, opt, env = env)
+opts <- function(xs = NULL, env = parent.frame()) {
+  if (is.character(env)) env <- getNamespace(env)
+  env <- get_options_env(env)
+  res <- as_options_list(env)
+  if (is.null(xs)) res else res[xs]
 }

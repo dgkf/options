@@ -132,7 +132,7 @@ define_options <- function(...) {
     args$desc <- reflow_option_desc(eval(group[[1]], envir = eval_env))[[1]]
 
     # build other arguments from remaining args
-    other_args <- lapply(group[c(-1,-2)], eval, envir = eval_env)
+    other_args <- lapply(group[c(-1, -2)], eval, envir = eval_env)
     args[names(other_args)] <- other_args
 
     do.call(option_spec, args, envir = eval_env)

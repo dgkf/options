@@ -5,6 +5,7 @@
 \alias{get_options_env}
 \alias{options_initialized}
 \alias{init_options_env}
+\alias{as_options_list}
 \alias{get_option_default_value}
 \alias{get_options_spec}
 \alias{get_option_spec}
@@ -16,6 +17,8 @@ get_options_env(env, ...)
 options_initialized(env, inherits = FALSE)
 
 init_options_env(env = parent.frame())
+
+as_options_list(x, ...)
 
 get_option_default_value(x, env = parent.frame())
 
@@ -44,6 +47,8 @@ attributes.
 \item \code{options_initialized()}: Test whether options is initialized in environment
 
 \item \code{init_options_env()}: Initialize an options object
+
+\item \code{as_options_list()}: Convert into an options list
 
 \item \code{get_option_default_value()}: Get the option's default value
 

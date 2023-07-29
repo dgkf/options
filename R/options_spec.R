@@ -38,6 +38,7 @@
 #' @return An `option_spec` object, which is a simple S3 class wrapping a list
 #'   containing these arguments.
 #'
+#' @importFrom utils packageName
 #' @export
 option_spec <- function(
   name,

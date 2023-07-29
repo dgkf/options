@@ -8,6 +8,13 @@ show_option(x, ...)
 }
 \arguments{
 \item{x}{An option name to explore}
+
+\item{...}{
+  Arguments passed on to \code{\link[options:opt]{options::opt}}
+  \describe{
+    \item{\code{default}}{A default value if the option is not set}
+    \item{\code{env}}{An environment, namespace or package name to pull options from}
+  }}
 }
 \value{
 the option value as it would be discovered inside this package
