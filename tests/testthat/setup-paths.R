@@ -1,13 +1,12 @@
 paths <- local({
-  is_testing_installed_package <- any(startsWith(
-    testthat::test_path(),
-    .libPaths()
-  ))
-
-  options.example_path <- if (is_testing_installed_package) {
-    system.file("options.example", package = "options")
+  sys_path <- system.file("options.example", package = "options")
+  options.example_path <- if (dir.exists(sys_path)) {
+    sys_path
   } else {
-    file.path(testthat::test_path(), "..", "..", "inst/options.example")
+    path <- testthat::test_path()
+    while (!file.exists(file.path(path, "DESCRIPTION"))) path <- dirname(path)
+    if (dir.exists(pinst <- file.path(path, "inst"))) path <- pinst
+    file.path(path, "options.example")
   }
 
   list(

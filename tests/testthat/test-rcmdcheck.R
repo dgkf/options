@@ -1,4 +1,5 @@
 test_that("Packages that use options pass R CMD check", {
+  skip_on_covr()
   skip_if_not(
     "options" %in% rownames(installed.packages()),
     paste0(
@@ -8,9 +9,13 @@ test_that("Packages that use options pass R CMD check", {
     )
   )
 
+  file.copy(paths$options.example, tempdir(), recursive = TRUE)
+  tmp <- file.path(tempdir(), basename(paths$options.example))
+  on.exit(unlink(tmp, recursive = TRUE))
+
   results <- suppressMessages({
     rcmdcheck::rcmdcheck(
-      paths$options.example,
+      tmp,
       args = "--no-manual",
       quiet = TRUE
     )
