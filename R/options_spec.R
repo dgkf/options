@@ -174,7 +174,6 @@ format_value <- function(x, ...) {
   UseMethod("format_value")
 }
 
-#' @name format_value
 format_value.default <- function(x, ..., fmt = options_fmts()) {
   if (isS4(x))
     UseMethod("format_value", structure(list(), class = "S4"))

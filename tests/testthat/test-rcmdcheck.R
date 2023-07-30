@@ -9,17 +9,11 @@ test_that("Packages that use options pass R CMD check", {
     )
   )
 
-  file.copy(paths$options.example, tempdir(), recursive = TRUE)
-  tmp <- file.path(tempdir(), basename(paths$options.example))
-  on.exit(unlink(tmp, recursive = TRUE))
-
-  results <- suppressMessages({
-    rcmdcheck::rcmdcheck(
-      tmp,
-      args = "--no-manual",
-      quiet = TRUE
-    )
-  })
+  results <- rcmdcheck::rcmdcheck(
+    paths$options.example,
+    args = "--no-manual", 
+    env = reset_envvars()
+  )
 
   expect_length(results$errors, 0)
   expect_length(results$warnings, 0)

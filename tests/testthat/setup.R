@@ -18,4 +18,13 @@ test_env <- function() {
   new.env(parent = baseenv())
 }
 
+reset_envvars <- function() {
+  envvars <- character()
+  for (v in names(Sys.getenv())) {
+    if (!(startsWith(v, "_R_CHECK") || startsWith(v, "TESTTHAT"))) next
+    envvars[v] <- ""
+  }
+  envvars
+}
+
 pkgload::load_all(paths$options.example)
