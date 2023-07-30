@@ -1,6 +1,7 @@
 test_that("options objects pretty print", {
-  e <- new.env()
-  expect_silent(with(e, define_option(
+  e <- new.env(parent = baseenv())
+
+  expect_silent(with(e, options::define_option(
     "A",
     default = 1,
     option_name = "opt.A",

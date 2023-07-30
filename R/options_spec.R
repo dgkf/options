@@ -38,6 +38,7 @@
 #' @return An `option_spec` object, which is a simple S3 class wrapping a list
 #'   containing these arguments.
 #'
+#' @importFrom utils packageName
 #' @export
 option_spec <- function(
   name,
@@ -173,7 +174,6 @@ format_value <- function(x, ...) {
   UseMethod("format_value")
 }
 
-#' @name format_value
 format_value.default <- function(x, ..., fmt = options_fmts()) {
   if (isS4(x))
     UseMethod("format_value", structure(list(), class = "S4"))

@@ -17,10 +17,10 @@
 #' @importFrom utils packageName
 #' @export
 as_roxygen_docs <- function(
-  title = paste(pkgname(env), "Options"),
-  desc = default_options_rd_desc(),
-  env = parent.frame()
-) {
+    title = paste(pkgname(env), "Options"),
+    desc = default_options_rd_desc(),
+    env = parent.frame()) {
+
   pkg <- pkgname(env)
   optenv <- get_options_env(env, inherits = TRUE)
   details <- get_options_spec(optenv)
@@ -30,23 +30,34 @@ as_roxygen_docs <- function(
     sprintf("@description %s", desc),
     "@rdname options",
     "@name options",
-    sprintf("@usage %s::opt(\"<name>\", env = \"%s\")", utils::packageName(), pkg),
-    sprintf("@usage options(\"<option>\")"),
-    sprintf("@usage options(\"<option>\" = <value>)"),
-    sprintf("@usage getOption(\"<option>\")"),
-    sprintf("@usage Sys.setenv(\"<envvar>\" = <value>)"),
-    sprintf("@usage Sys.getenv(\"<envvar>\")"),
+    "@section Checking Option Values:",
+    "Option values specific to `", pkg, "` can be ",
+    "accessed by passing the package name to `env`.",
+    "",
+    sprintf("    options::opts(env = \"%s\")", pkg),
+    "",
+    sprintf("    options::opt(x, default, env = \"%s\")", pkg),
+    "",
+
+    "@seealso options getOption Sys.getenv Sys.getenv",
     "@section Options:",
     "\\describe{",
     vapply(setdiff(names(optenv), CONST_OPTIONS_META), function(n) {
-      sprintf("\\item{%s}{\\describe{%s}}", n,
-        paste0(sep = "\n",
+      sprintf(
+        "\\item{%s}{\\describe{%s}}\n", n,
+        paste0(
+          sep = "\n",
           details[[n]]$desc,
-          sprintf("\\item{default: }{\\preformatted{%s}}",
-            paste0(collapse = "\n",
-              deparse(eval(bquote(substitute(.(as.symbol(n)), optenv)))))),
-          sprintf("\\item{option: }{%s}", details[[n]]$option_name),
-          sprintf("\\item{envvar: }{%s (%s)}",
+          sprintf(
+            "\\item{default: }{\\preformatted{%s}}\n",
+            paste0(
+              collapse = "\n",
+              deparse(eval(bquote(substitute(.(as.symbol(n)), optenv))))
+            )
+          ),
+          sprintf("\\item{option: }{%s}\n", details[[n]]$option_name),
+          sprintf(
+            "\\item{envvar: }{%s (%s)}\n",
             details[[n]]$envvar_name,
             attr(details[[n]]$envvar_fn, "desc") %||% "preprocessed"
           )
@@ -93,18 +104,21 @@ as_params <- function(...) {
   optenv <- get_options_env(env, inherits = TRUE)
   details <- get_options_spec(optenv)
 
-  if (length(opts) && !(is.character(opts) && all(opts %in% names(optenv)))) {
+  missing_opt_names <- setdiff(opts, names(optenv))
+  if (length(missing_opt_names) > 0) {
     stop(sprintf(
       "options %s not found.",
-      paste0("'", setdiff(opts, names(optenv)), "'", collapse = ", ")
+      paste0("'", missing_opt_names, "'", collapse = ", ")
     ))
   }
 
-  if (length(opts) == 0)
+  if (length(opts) == 0) {
     opts <- setdiff(names(optenv), CONST_OPTIONS_META)
+  }
 
-  if (is.null(names(opts)))
+  if (is.null(names(opts))) {
     names(opts) <- opts
+  }
 
   unnamed <- names(opts) == ""
   names(opts[unnamed]) <- opts[unnamed]
@@ -118,7 +132,8 @@ as_params <- function(...) {
     sprintf(
       paste0(
         "@param %s %s (Defaults to `%s`, overwritable using option '%s' or ",
-        "environment variable '%s')"),
+        "environment variable '%s')"
+      ),
       n,
       optdetails$desc %||% "From package option",
       default,

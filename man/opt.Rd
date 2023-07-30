@@ -10,7 +10,7 @@ opt(x, default, env = parent.frame())
 
 opt_source(x, env = parent.frame())
 
-opts(xs, env = parent.frame())
+opts(xs = NULL, env = parent.frame())
 }
 \arguments{
 \item{x, xs}{An option name or vector of option names}
@@ -38,7 +38,8 @@ Inspecting Option Values
 \item \code{opt_source()}: Determine source of option value. Primarily used for diagnosing options
 behaviors.
 
-\item \code{opts()}: Retrieve multiple options
+\item \code{opts()}: Retrieve multiple options. When no names are provided, return a list
+containing all options from a given environment.
 
 }}
 \examples{
