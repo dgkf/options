@@ -21,8 +21,12 @@ test_env <- function() {
 reset_envvars <- function() {
   envvars <- character()
   for (v in names(Sys.getenv())) {
-    if (!(startsWith(v, "_R_CHECK") || startsWith(v, "TESTTHAT"))) next
-    envvars[v] <- ""
+    if (startsWith(v, "_R_CHECK") ||
+      startsWith(v, "RCMDCHECK") ||
+      startsWith(v, "R_TESTS") ||
+      startsWith(v, "TESTTHAT")) {
+      envvars[v] <- ""
+    }
   }
   envvars
 }
