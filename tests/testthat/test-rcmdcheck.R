@@ -1,5 +1,4 @@
 test_that("Packages that use options pass R CMD check", {
-  skip_on_os(c("windows", "solaris"))
   skip_on_covr()
   skip_if_not(
     "options" %in% rownames(installed.packages()),

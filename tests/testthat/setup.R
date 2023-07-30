@@ -18,6 +18,10 @@ test_env <- function() {
   new.env(parent = baseenv())
 }
 
+# Configure a set of masking environment variables to allow R CMD check to run
+# as a test within R CMD check of `options`. Without masking these, they are
+# inherited in the child process which causes false positive R CMD check 
+# errors.
 reset_envvars <- function() {
   envvars <- character()
   for (v in names(Sys.getenv())) {
