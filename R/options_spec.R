@@ -169,7 +169,7 @@ format_field <- function(field, active, value, fmt = options_fmts()) {
 #' @return A formatted character value
 #'
 #' @keywords internal
-format_value <- function(x, ...) {
+format_value <- function(x, ..., fmt = NULL) {
   if (missing(x)) return("")
   UseMethod("format_value")
 }
