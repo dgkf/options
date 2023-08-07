@@ -3,7 +3,6 @@
 #' Generate a list of styling functions using `crayon`, while safely falling
 #' back to non-`crayon` output when `crayon` is unavailable.
 #'
-#' @param x text to format
 #' @return formatted text
 #'
 #' @keywords internal
