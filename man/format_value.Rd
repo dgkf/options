@@ -13,11 +13,11 @@
 \alias{format_value.symbol}
 \title{Format value shorthands for command line display}
 \usage{
-format_value(x, ...)
+format_value(x, ..., fmt = NULL)
 
-\method{format_value}{S3}(x, .., fmt = options_fmts())
+\method{format_value}{S3}(x, ..., fmt = options_fmts())
 
-\method{format_value}{S4}(x, .., fmt = options_fmts())
+\method{format_value}{S4}(x, ..., fmt = options_fmts())
 
 \method{format_value}{`function`}(x, ..., fmt = options_fmts())
 

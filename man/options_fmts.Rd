@@ -6,9 +6,6 @@
 \usage{
 options_fmts()
 }
-\arguments{
-\item{x}{text to format}
-}
 \value{
 formatted text
 }
