@@ -189,12 +189,12 @@ format_value.default <- function(x, ..., fmt = options_fmts()) {
 }
 
 #' @name format_value
-format_value.S3 <- function(x, .., fmt = options_fmts()) {
+format_value.S3 <- function(x, ..., fmt = options_fmts()) {
   fmt$shorthand(sprintf("<class: %s>", paste0(class(x), collapse = ", ")))
 }
 
 #' @name format_value
-format_value.S4 <- function(x, .., fmt = options_fmts()) {
+format_value.S4 <- function(x, ..., fmt = options_fmts()) {
   fmt$shorthand(sprintf("<S4: %s>", paste0(class(x), collapse = ", ")))
 }
 
