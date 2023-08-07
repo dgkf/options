@@ -1,3 +1,4 @@
 docs
 inst/doc
-inst/**/man
+
+**.tar.gz
