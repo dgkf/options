@@ -39,7 +39,7 @@ as_roxygen_docs <- function(
     sprintf("    options::opt(x, default, env = \"%s\")", pkg),
     "",
 
-    "@seealso options getOption Sys.getenv Sys.getenv",
+    "@seealso options getOption Sys.setenv Sys.getenv",
     "@section Options:",
     "\\describe{",
     vapply(setdiff(names(optenv), CONST_OPTIONS_META), function(n) {
