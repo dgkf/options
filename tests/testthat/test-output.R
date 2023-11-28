@@ -31,3 +31,22 @@ test_that("options objects pretty print", {
   expect_match(out, " default")
   Sys.unsetenv("OPT_A")
 })
+
+test_that("options objects prints options in definition order", {
+  e <- new.env(parent = baseenv())
+
+  expect_silent(with(e, options::define_option(
+    "B",
+    default = 2,
+    envvar_name = "OPT_B"
+  )))
+
+  expect_silent(with(e, options::define_option(
+    "A",
+    default = 1,
+    envvar_name = "OPT_A"
+  )))
+
+  expect_silent(out <- paste0(capture.output(e$.options), collapse = "\n"))
+  expect_match(out, "OPT_B.*OPT_A")
+})

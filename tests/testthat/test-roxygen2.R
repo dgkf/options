@@ -15,6 +15,15 @@ test_that("roxygen2-style block is generated from options env object", {
   expect_match(block, "\\{envvar: \\}\\{OPT_A")
 })
 
+test_that("roxygen2 options documentation is in definition order", {
+  e <- test_env()
+  expect_silent(with(e, options::define_option("B")))
+  expect_silent(with(e, options::define_option("A")))
+
+  expect_silent(block <- paste0(as_roxygen_docs(env = e), collapse = "\n"))
+  expect_match(block, "\\\\item\\{B\\}.*\\\\item\\{A\\}")
+})
+
 test_that("roxygen2-style params block is generated from as_params", {
   e <- test_env()
 
