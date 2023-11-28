@@ -42,7 +42,7 @@ as_roxygen_docs <- function(
     "@seealso options getOption Sys.setenv Sys.getenv",
     "@section Options:",
     "\\describe{",
-    vapply(setdiff(names(optenv), CONST_OPTIONS_META), function(n) {
+    vapply(setdiff(names(details), CONST_OPTIONS_META), function(n) {
       sprintf(
         "\\item{%s}{\\describe{%s}}\n", n,
         paste0(
