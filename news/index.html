@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">options</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,6 +53,11 @@
       <small>Source: <a href="https://github.com/dgkf/options/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.0" id="options-010">options 0.1.0<a class="anchor" aria-label="anchor" href="#options-010"></a></h2>
+<ul><li><p>Adds various utility functions for modifying options: <code><a href="../reference/opt.html">opt_set()</a></code>, <code>opt()&lt;-</code> and <code><a href="../reference/opt.html">opt_set_local()</a></code>.</p></li>
+<li><p>Trying to retrieve an option that is not yet defined will now default to throwing a warning. This behavior can be modified using the <code>on_missing</code> argument to functions that fetch option values.</p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.2" id="options-002">options 0.0.2<a class="anchor" aria-label="anchor" href="#options-002"></a></h2><p class="text-muted">CRAN release: 2023-08-07</p>
 <ul><li><p><code><a href="../reference/opt.html">opts()</a></code> slightly refactored to produce more constructive output when no option names are provided. You can now use <code>opts(env = package_name)</code> to fetch a full named list of option values. (<a href="https://github.com/dgkf" class="external-link">@dgkf</a> <a href="https://github.com/dgkf/options/issues/2" class="external-link">#2</a>)</p></li>
