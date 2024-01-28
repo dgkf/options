@@ -2,22 +2,48 @@
 % Please edit documentation in R/options_get.R
 \name{opt}
 \alias{opt}
+\alias{opt_set}
+\alias{opt<-}
 \alias{opt_source}
 \alias{opts}
+\alias{opt_set_local}
 \title{Inspecting Option Values}
 \usage{
-opt(x, default, env = parent.frame())
+opt(x, default, env = parent.frame(), ...)
+
+opt_set(x, value, env = parent.frame(), ...)
+
+opt(x, ...) <- value
 
 opt_source(x, env = parent.frame())
 
 opts(xs = NULL, env = parent.frame())
+
+opt_set_local(
+  x,
+  value,
+  env = parent.frame(),
+  ...,
+  add = TRUE,
+  after = FALSE,
+  scope = parent.frame()
+)
 }
 \arguments{
-\item{x, xs}{An option name or vector of option names}
+\item{x, xs}{An option name, vector of option names, or a named list of new
+option values}
 
 \item{default}{A default value if the option is not set}
 
 \item{env}{An environment, namespace or package name to pull options from}
+
+\item{...}{Additional arguments unused}
+
+\item{value}{A new value to update the associated global option}
+
+\item{add, after, scope}{Passed to \link{on.exit}, with alternative defaults.
+\code{scope} is passed to the \link{on.exit} \code{envir} parameter to disambiguate it
+from \code{env}.}
 }
 \value{
 For \code{opt()} and \code{opts()}; the result of the option (or a list of
@@ -25,7 +51,10 @@ results), either the value from a global option, the result of processing
 the environment variable or the default value, depending on which of the
 alternative sources are defined.
 
-For \code{opt_source()}; the source that is used for a specific option,
+For modifying functions (\link{opt_set} and \link{opt<-}: the value of the
+option prior to modification
+
+For \link{opt_source}; the source that is used for a specific option,
 one of \code{"option"}, \code{"envir"} or \code{"default"}.
 }
 \description{
@@ -35,13 +64,31 @@ Inspecting Option Values
 \itemize{
 \item \code{opt()}: Retrieve an option
 
+\item \code{opt_set()}: Set an option's value
+
+\item \code{opt(x, ...) <- value}: An alias for \link{opt_set}
+
 \item \code{opt_source()}: Determine source of option value. Primarily used for diagnosing options
 behaviors.
 
 \item \code{opts()}: Retrieve multiple options. When no names are provided, return a list
-containing all options from a given environment.
+containing all options from a given environment. Accepts a character
+vector of option names or a named list of new values to modify global
+option values.
+
+\item \code{opt_set_local()}: Set an option only in the local frame
 
 }}
+\note{
+Local options are set with \link{on.exit}, which can be prone to error if
+subsequent calls are not called with \code{add = TRUE} (masking existing
+\link{on.exit} callbacks). A more rigorous alternative might make use of
+\link[withr:defer]{withr::defer}.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{old <- opt_set("option", value)
+withr::defer(opt_set("option", old))
+}\if{html}{\out{</div>}}
+}
 \examples{
 define_options("Whether execution should emit console output", quiet = FALSE)
 opt("quiet")
@@ -54,5 +101,16 @@ opt_source("quiet")
 
 options(globalenv.quiet = FALSE)
 opt_source("quiet")
+
+define_options("Quietly", quiet = TRUE, "Verbosity", verbose = FALSE)
+
+# retrieve multiple options
+opts(c("quiet", "verbose"))
+
+# update multiple options, returns unmodified values
+opts(list(quiet = 42, verbose = TRUE))
+
+# next time we check their values we'll see the modified values
+opts(c("quiet", "verbose"))
 
 }

@@ -110,10 +110,25 @@ get_options_spec <- function(env = parent.frame()) {
 
 #' @describeIn options_env
 #' Get single option specification
-get_option_spec <- function(name, env = parent.frame()) {
-  optenv <- get_options_env(env)
+get_option_spec <- function(
+  name,
+  env = parent.frame(),
+  inherits = FALSE,
+  on_missing = warning
+) {
+  optenv <- get_options_env(env, inherits = inherits)
   spec <- attr(optenv, "spec")
-  if (!is.null(name) && name %in% names(spec)) spec[[name]]
+
+  if (!is.null(name) && name %in% names(spec)) {
+    return(spec[[name]])
+  } else if (!is.null(on_missing)) {
+    raise(
+      on_missing,
+      msg = paste0("option '", name, "' is not defined in environment")
+    )
+  }
+
+  NULL
 }
 
 #' @describeIn options_env

@@ -55,9 +55,9 @@ options::define_option(
     "Or, if you prefer a more concrete constructor you can define each option ",
     "explicitly."
   ),
-  option_name = "mypackage_concrete", # define custom option names
-  envvar_name = "MYPACKAGE_CONCRETE", # and custom environment variable names
-  envvar_fn = envvar_is_true()        # and use helpers to handle envvar parsing
+  option_name = "mypackage_concrete",   # define custom option names
+  envvar_name = "MYPACKAGE_CONCRETE",   # and custom environment variable names
+  envvar_fn = options::envvar_is_true() # and use helpers to handle envvar parsing
 )
 ```
 

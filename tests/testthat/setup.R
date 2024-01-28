@@ -20,7 +20,7 @@ test_env <- function() {
 
 # Configure a set of masking environment variables to allow R CMD check to run
 # as a test within R CMD check of `options`. Without masking these, they are
-# inherited in the child process which causes false positive R CMD check 
+# inherited in the child process which causes false positive R CMD check
 # errors.
 reset_envvars <- function() {
   envvars <- character()
@@ -35,4 +35,14 @@ reset_envvars <- function() {
   envvars
 }
 
-pkgload::load_all(paths$options.example)
+remove_options_env <- function() {
+  env <- get_options_env.default(parent.frame(), inherits = TRUE)
+  specs <- get_options_spec(env)
+  opt_names <- vcapply(specs, function(spec) spec$option_name)
+  args <- rep_len(list(NULL), length(opt_names))
+  names(args) <- opt_names
+  do.call(options, args)
+  rm(".options", envir = parent.env(env))
+}
+
+pkgload::load_all(paths$options.example, export_all = FALSE)

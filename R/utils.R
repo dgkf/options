@@ -16,10 +16,54 @@ pkgname <- function(env = parent.frame()) {
 
 `%||%` <- function(lhs, rhs) if (is.null(lhs)) rhs else lhs
 
-vlapply <- function(..., FUN.VALUE = logical(1L)) {
+vlapply <- function(..., FUN.VALUE = logical(1L)) {  # nolint object_name_linter
   vapply(..., FUN.VALUE = FUN.VALUE)
 }
 
-vcapply <- function(..., FUN.VALUE = character(1L)) {
+vcapply <- function(..., FUN.VALUE = character(1L)) {  # nolint object_name_linter
   vapply(..., FUN.VALUE = FUN.VALUE)
+}
+
+as_env <- function(x) {
+  UseMethod("as_env")
+}
+
+as_env.character <- function(x) {
+  getNamespace(x)
+}
+
+as_env.environment <- function(x) {
+  x
+}
+
+list_is_all_named <- function(x) {
+  !(is.null(names(x)) || "" %in% names(x))
+}
+
+list_is_all_unnamed <- function(x) {
+  is.null(names(x)) || all(names(x) == "")
+}
+
+raise <- function(x, ...) {
+  UseMethod("raise")
+}
+
+raise.character <- function(x, ...) {
+  x <- switch(x,
+    "print" = , "info" = , "message" = message,
+    "warn" = , "warning" = warning,
+    "error" = , "stop" = stop
+  )
+
+  raise.function(x, ...)
+}
+
+raise.function <- function(x, msg, ...) {
+  args <- list(msg, ...)
+
+  if (!"call." %in% names(args) && "call." %in% names(formals(x))) {
+    args[["call."]] <- FALSE
+  }
+
+  do.call(x, args)
 }
