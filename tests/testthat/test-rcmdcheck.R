@@ -12,8 +12,10 @@ test_that("Packages that use options pass R CMD check", {
 
   results <- rcmdcheck::rcmdcheck(
     paths$options.example,
-    args = "--no-manual", 
-    env = reset_envvars()
+    build_args = "--no-manual",
+    args = "--no-manual",
+    env = reset_envvars(),
+    quiet = TRUE
   )
 
   expect_length(results$errors, 0)

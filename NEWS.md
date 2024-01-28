@@ -1,4 +1,11 @@
-# dev
+# options 0.1.0
+
+* Adds various utility functions for modifying options: `opt_set()`, `opt()<-`
+  and `opt_set_local()`.
+
+* Trying to retrieve an option that is not yet defined will now default to
+  throwing a warning. This behavior can be modified using the `on_missing` 
+  argument to functions that fetch option values.
 
 # options 0.0.2
 

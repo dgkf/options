@@ -24,7 +24,12 @@ get_option_default_value(x, env = parent.frame())
 
 get_options_spec(env = parent.frame())
 
-get_option_spec(name, env = parent.frame())
+get_option_spec(
+  name,
+  env = parent.frame(),
+  inherits = FALSE,
+  on_missing = warning
+)
 
 set_option_spec(name, details, env = parent.frame())
 }
