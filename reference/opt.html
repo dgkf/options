@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">options</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -147,8 +147,8 @@ option values.</p></li>
 subsequent calls are not called with <code>add = TRUE</code> (masking existing
 <a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit</a> callbacks). A more rigorous alternative might make use of
 <a href="https://withr.r-lib.org/reference/defer.html" class="external-link">withr::defer</a>.</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>old <span class="ot">&lt;-</span> <span class="fu">opt_set</span>(<span class="st">"option"</span>, value)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>withr<span class="sc">::</span><span class="fu">defer</span>(<span class="fu">opt_set</span>(<span class="st">"option"</span>, old))</span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>old <span class="ot">&lt;-</span> <span class="fu">opt_set</span>(<span class="st">"option"</span>, value)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>withr<span class="sc">::</span><span class="fu">defer</span>(<span class="fu">opt_set</span>(<span class="st">"option"</span>, old))</span></code></pre><p></p></div>
     </div>
 
     <div class="section level2">
