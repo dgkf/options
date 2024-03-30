@@ -1,3 +1,4 @@
+
 body {
   --bs-code-color: rgba(var(--bs-primary-rgb), 0.8);
 }
@@ -19,26 +20,37 @@ pre {
   border-width: 0.2em;
 }
 
+.btn-copy-ex {
+  padding: 0.5em 1em;
+}
+
+// for dev version tag, which can be hard to read with bright navbars
+.nav-text.text-danger {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 0.2em 0.8em;
+  border-radius: 1em;
+}
+
 .navbar-dark {
   --bs-navbar-color: rgba(var(--bs-body-bg-rgb), 0.8);
   --bs-navbar-hover-color: rgba(var(--bs-body-bg-rgb), 1.0);
-}
+  font-weight: bolder;
 
-.navbar-dark .navbar-nav .active > .nav-link {
-  background: rgba(255, 255, 255, 0.2);
-}
+  .navbar-nav {
+    .active > .nav-link {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
 
-.navbar-dark .navbar-nav .active > .nav-link:hover {
-  background: rgba(255, 255, 255, 0.3);
+  input[type="search"] {
+    border: none;
+    border-radius: 0.1em;
+    background-color: rgba(var(--bs-body-bg-rgb), 0.8);
+    color: rgba(var(--bs-primary-rgb), 0.6);
+    &:focus { background-color: rgba(var(--bs-body-bg-rgb), 0.90); }
+  }
 }
 
 .text-muted {
   color: rgba(var(--bs-body-bg-rgb), 0.6) !important;
-}
-
-.navbar-dark input[type="search"] {
-  border: none;
-  border-radius: 0.1em;
-  background-color: rgba(var(--bs-body-bg-rgb), 0.8);
-  color: rgba(var(--bs-primary-rgb), 0.6);
 }

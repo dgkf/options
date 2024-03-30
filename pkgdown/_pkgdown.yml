@@ -1,3 +1,6 @@
+development:
+  mode: auto
+
 url: ~
 template:
   bootstrap: 5
@@ -6,6 +9,11 @@ template:
     fg: "#404040"
     bg: "#F4F4F4"
     primary: "#fa3939"
+    navbar-dark-active-color: var(--bs-fg)
+    navbar-dark-color: var(--bs-fg)
+    navbar-dark-brand-color: var(--bs-fg)
+    navbar-dark-brand-hover-color: white
+    navbar-dark-hover-color: white
 
 navbar:
   bg: primary
