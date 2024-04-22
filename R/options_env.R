@@ -28,14 +28,17 @@ get_options_env <- function(env, ...) {
   UseMethod("get_options_env")
 }
 
+#' @name options_env
 get_options_env.options_env <- function(env, ...) {
   env
 }
 
+#' @name options_env
 get_options_env.options_list <- function(env, ...) {
   attr(env, "environment")
 }
 
+#' @name options_env
 get_options_env.default <- function(env, ..., inherits = FALSE) {
   if (!options_initialized(env, inherits = inherits)) {
     init_options_env(env = env)
@@ -75,6 +78,7 @@ as_options_list <- function(x, ...) {
   UseMethod("as_options_list")
 }
 
+#' @name options_env
 as_options_list.options_env <- function(x, ...) {
   res <- structure(as.list(x), class = c("options_list", "list"))
 

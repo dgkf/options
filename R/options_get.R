@@ -34,13 +34,23 @@ opt <- function(x, default, env = parent.frame(), ...) {
   optenv  <- get_options_env(as_env(env), inherits = TRUE)
   spec <- get_option_spec(x, env = optenv)
 
-  switch(
-    opt_source(spec, env = optenv),
+  source <- opt_source(spec, env = optenv)
+  value <- switch(
+    source,
     "envir"   = spec$envvar_fn(Sys.getenv(spec$envvar_name), spec$envvar_name),
     "option"  = getOption(spec$option_name),
     "default" = get_option_default_value(x, optenv),
     if (missing(default)) stop(sprintf("option '%s' not found.", x))
     else default
+  )
+
+  spec$option_fn(
+    value,
+    x = x,
+    default = default,
+    env = env,
+    ...,
+    source = source
   )
 }
 
