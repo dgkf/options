@@ -49,7 +49,7 @@ Defaults to \code{envvar_eval_or_raw()}. For further details see section
 "Processing Functions".}
 
 \item{quoted}{A logical value indicating whether the \code{default} argument
-should be treated as a quoted as.expression()sion or as a value.}
+should be treated as a quoted expression or as a value.}
 
 \item{eager}{A logical value indicating whether the \code{default} argument should
 be eagerly evaluated (upon call), or lazily evaluated (upon first use).

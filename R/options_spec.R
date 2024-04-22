@@ -73,7 +73,7 @@
 #'   Defaults to `envvar_eval_or_raw()`. For further details see section
 #'   "Processing Functions".
 #' @param quoted A logical value indicating whether the `default` argument
-#'   should be treated as a quoted as.expression()sion or as a value.
+#'   should be treated as a quoted expression or as a value.
 #' @param eager A logical value indicating whether the `default` argument should
 #'   be eagerly evaluated (upon call), or lazily evaluated (upon first use).
 #'   This distinction will only affect default values that rely on evaluation of
