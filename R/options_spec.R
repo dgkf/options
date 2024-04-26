@@ -9,8 +9,8 @@
 #'
 #' # Processing Functions
 #'
-#' Parameters `option_fn` and `envvar_fn` allow for customzing the way values
-#' are interpretted and processed before being returned by [`opt`] functions.
+#' Parameters `option_fn` and `envvar_fn` allow for customizing the way values
+#' are interpreted and processed before being returned by [`opt`] functions.
 #'
 #' ## `envvar_fn`
 #'
