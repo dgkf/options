@@ -37,7 +37,8 @@ option values}
 
 \item{env}{An environment, namespace or package name to pull options from}
 
-\item{...}{Additional arguments unused}
+\item{...}{Additional arguments passed to an optional \code{option_fn}. See
+\code{\link[=option_spec]{option_spec()}} for details.}
 
 \item{value}{A new value to update the associated global option}
 

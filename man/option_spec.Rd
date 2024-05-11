@@ -71,8 +71,8 @@ name, as well as a description. This information defines the operating
 behavior of the option.
 }
 \section{Processing Functions}{
-Parameters \code{option_fn} and \code{envvar_fn} allow for customzing the way values
-are interpretted and processed before being returned by \code{\link{opt}} functions.
+Parameters \code{option_fn} and \code{envvar_fn} allow for customizing the way values
+are interpreted and processed before being returned by \code{\link{opt}} functions.
 \subsection{\code{envvar_fn}}{
 
 When a value is retrieved from an environment variable, the string value
