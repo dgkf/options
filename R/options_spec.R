@@ -88,16 +88,17 @@
 #' @importFrom utils packageName
 #' @export
 option_spec <- function(
-    name,
-    default = bquote(),
-    desc = NULL,
-    option_name = get_option_name_fn(envir),
-    envvar_name = get_envvar_name_fn(envir),
-    option_fn = function(value, ...) value,
-    envvar_fn = envvar_eval_or_raw(),
-    quoted = FALSE,
-    eager = FALSE,
-    envir = parent.frame()) {
+  name,
+  default = bquote(),
+  desc = NULL,
+  option_name = get_option_name_fn(envir),
+  envvar_name = get_envvar_name_fn(envir),
+  option_fn = function(value, ...) value,
+  envvar_fn = envvar_eval_or_raw(),
+  quoted = FALSE,
+  eager = FALSE,
+  envir = parent.frame()
+) {
   package <- pkgname(envir)
 
   if (!missing(default) && !quoted && !eager) {

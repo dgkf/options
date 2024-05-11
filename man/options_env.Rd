@@ -3,9 +3,13 @@
 \name{options_env}
 \alias{options_env}
 \alias{get_options_env}
+\alias{get_options_env.options_env}
+\alias{get_options_env.options_list}
+\alias{get_options_env.default}
 \alias{options_initialized}
 \alias{init_options_env}
 \alias{as_options_list}
+\alias{as_options_list.options_env}
 \alias{get_option_default_value}
 \alias{get_options_spec}
 \alias{get_option_spec}
@@ -14,11 +18,19 @@
 \usage{
 get_options_env(env, ...)
 
+\method{get_options_env}{options_env}(env, ...)
+
+\method{get_options_env}{options_list}(env, ...)
+
+\method{get_options_env}{default}(env, ..., inherits = FALSE)
+
 options_initialized(env, inherits = FALSE)
 
 init_options_env(env = parent.frame())
 
 as_options_list(x, ...)
+
+\method{as_options_list}{options_env}(x, ...)
 
 get_option_default_value(x, env = parent.frame())
 
