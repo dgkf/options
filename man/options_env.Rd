@@ -5,6 +5,7 @@
 \alias{options_initialized}
 \alias{init_options_env}
 \alias{as_options_list}
+\alias{as_options_list.list}
 \alias{as_options_list.options_env}
 \alias{get_option_default_value}
 \alias{get_options_spec}
@@ -17,6 +18,8 @@ options_initialized(env, inherits = FALSE)
 init_options_env(env = parent.frame())
 
 as_options_list(x, ...)
+
+\method{as_options_list}{list}(x, ...)
 
 \method{as_options_list}{options_env}(x, ...)
 

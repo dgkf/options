@@ -2,14 +2,30 @@
 % Please edit documentation in R/options_env.R
 \name{get_options_env}
 \alias{get_options_env}
+\alias{get_options_env.options_env}
+\alias{get_options_env.options_list}
+\alias{get_options_env.default}
 \title{Retrieve options environment (experimental)}
 \usage{
 get_options_env(env, ...)
+
+\method{get_options_env}{options_env}(env, ...)
+
+\method{get_options_env}{options_list}(env, ...)
+
+\method{get_options_env}{default}(
+  env = parent.frame(),
+  ...,
+  inherits = FALSE,
+  ifnotfound = emptyenv()
+)
 }
 \arguments{
 \item{env}{An environment in which to search for an options environment}
 
 \item{...}{Additional arguments unused}
+
+\item{inherits}{Whether to search upward through parent environments}
 
 \item{ifnotfound}{A result to return of no options environment is found.}
 }

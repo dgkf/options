@@ -33,7 +33,6 @@ NULL
 #'   of retrieving these names should be considered experimental.
 #'
 #' @inheritParams options_env
-#' @param ifnotfound A result to return of no options environment is found.
 #' @return An environment containing option specifications and default values,
 #'   or `ifnotfound` if no environment is found.
 #'
@@ -42,16 +41,20 @@ get_options_env <- function(env, ...) {
   UseMethod("get_options_env")
 }
 
+#' @name get_options_env
 #' @export
 get_options_env.options_env <- function(env, ...) {
   env
 }
 
+#' @name get_options_env
 #' @export
 get_options_env.options_list <- function(env, ...) {
   attr(env, "environment")
 }
 
+#' @name get_options_env
+#' @param ifnotfound A result to return of no options environment is found.
 #' @export
 get_options_env.default <- function(
     env = parent.frame(),

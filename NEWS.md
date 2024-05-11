@@ -1,5 +1,12 @@
 # options 0.2.0
 
+* Fixes `opts()`, which would previously return default values after being
+  updated. Will now appropriately return values just as they would be fetched
+  using `opt()`. (@dgkf #17)
+
+* Exposes `get_options_env()` (currently experimental), for the purpose of
+  accessing a listing of option names. (@dgkf #17)
+
 * Adds an optional `option_fn` parameter to `option_spec`, allowing for the 
   stored option values to be processed, or to produce side-effects when 
   accessed. (@dgkf #12)
