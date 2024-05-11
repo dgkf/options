@@ -186,7 +186,7 @@ print.options_env <- function(x, ...) {
 print.options_list <- print.options_env
 
 #' @exportS3Method as.list options_env
-as.list.options_env <- function(x) {
+as.list.options_env <- function(x, ...) {
   values <- list()
   for (n in names(x)) {
     values[[n]] <- if (do.call(missing, list(n), envir = x)) {
