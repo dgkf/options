@@ -56,7 +56,7 @@ For modifying functions (\link{opt_set} and \link{opt<-}: the value of the
 option prior to modification
 
 For \link{opt_source}; the source that is used for a specific option,
-one of \code{"option"}, \code{"envir"} or \code{"default"}.
+one of \code{"option"}, \code{"envvar"} or \code{"default"}.
 }
 \description{
 Inspecting Option Values

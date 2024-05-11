@@ -180,5 +180,5 @@ test_that("option_spec option_fn processes option values", {
   expect_output(withr::with_envvar(
     list(OPT_A = "10"),
     expect_equal(opt("A", env = e), 11)
-  ), "envir")
+  ), "envvar")
 })

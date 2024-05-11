@@ -37,7 +37,7 @@ opt <- function(x, default, env = parent.frame(), ...) {
 
   source <- opt_source(spec, env = optenv)
   value <- switch(source,
-    "envir" = spec$envvar_fn(Sys.getenv(spec$envvar_name), spec$envvar_name),
+    "envvar" = spec$envvar_fn(Sys.getenv(spec$envvar_name), spec$envvar_name),
     "option" = getOption(spec$option_name),
     "default" = get_option_default_value(x, optenv),
     if (missing(default)) {
@@ -99,7 +99,7 @@ opt_set <- function(x, value, env = parent.frame(), ...) {
 #' behaviors.
 #'
 #' @return For [opt_source]; the source that is used for a specific option,
-#'   one of `"option"`, `"envir"` or `"default"`.
+#'   one of `"option"`, `"envvar"` or `"default"`.
 #'
 #' @examples
 #' define_options("Whether execution should emit console output", quiet = FALSE)
@@ -123,13 +123,13 @@ opt_source <- function(x, env = parent.frame()) {
 
   # determine whether option is set in various places
   opt_sources <- list(
-    option  = function(x) x$option_name %in% names(.Options),
-    envir   = function(x) !is.na(Sys.getenv(x$envvar_name, unset = NA)),
+    option = function(x) x$option_name %in% names(.Options),
+    envvar = function(x) !is.na(Sys.getenv(x$envvar_name, unset = NA)),
     default = function(x) !(is.name(x$expr) && nchar(x$expr) == 0)
   )
 
   # TODO: priority possibly configurable per-option in the future
-  sources <- c("option", "envir", "default")
+  sources <- c("option", "envvar", "default")
 
   for (origin in sources) {
     if (opt_sources[[origin]](x)) {
