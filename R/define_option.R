@@ -14,7 +14,6 @@
 #' define_options(
 #'   "Whether execution should emit console output",
 #'   quiet = FALSE,
-#'
 #'   "Whether to use detailed console output (showcasing additional
 #'   configuration parameters)",
 #'   verbose = TRUE,
@@ -50,18 +49,19 @@ define_option <- function(option, ...) {
 #' @inheritParams option_spec
 #' @export
 define_option.character <- function(
-  option,
-  default = bquote(),
-  ...,
-  quoted = FALSE,
-  eager = FALSE,
-  envir = parent.frame()
-) {
-  if (!missing(default) && !quoted && !eager)
+    option,
+    default = bquote(),
+    ...,
+    quoted = FALSE,
+    eager = FALSE,
+    envir = parent.frame()) {
+  if (!missing(default) && !quoted && !eager) {
     default <- match.call()[["default"]]
+  }
 
-  if (quoted && eager)
+  if (quoted && eager) {
     default <- eval(default, envir = envir)
+  }
 
   define_option(option_spec(
     name = option,
@@ -115,8 +115,9 @@ define_options <- function(...) {
   x <- as.list(substitute(...()))
 
   # always use named arguments, even if no names are used
-  if (is.null(names(x)))
+  if (is.null(names(x))) {
     names(x) <- rep("", length(x))
+  }
 
   # test against common non-standard eval syntax issues
   verify_define_options_syntax(x)
@@ -145,19 +146,22 @@ define_options <- function(...) {
 
 
 verify_define_options_syntax <- function(x) {
-  no_desc      <- names(x)[[1]] != ""
-  no_arg       <- names(x) == "" & vlapply(x, function(i) all(nchar(i) == 0))
+  no_desc <- names(x)[[1]] != ""
+  no_arg <- names(x) == "" & vlapply(x, function(i) all(nchar(i) == 0))
   no_named_arg <- names(x) == "" & c(names(x)[-1] == "", TRUE)
-  arg_desc     <- c(names(x)[-length(x)] != "" & names(x)[-1] == "desc", FALSE)
-  arg_name     <- c(names(x)[-length(x)] != "" & names(x)[-1] == "name", FALSE)
+  arg_desc <- c(names(x)[-length(x)] != "" & names(x)[-1] == "desc", FALSE)
+  arg_name <- c(names(x)[-length(x)] != "" & names(x)[-1] == "name", FALSE)
 
-  if (!any(no_desc | no_named_arg | arg_desc | arg_name))
+  if (!any(no_desc | no_named_arg | arg_desc | arg_name)) {
     return(TRUE)
+  }
 
   # helper for creating an itemized "issue" message as part of error message
   opt_n <- cumsum(names(x) != "" & c(TRUE, names(x)[-length(x)] == ""))
   issue <- function(at, ..., verbatim = FALSE) {
-    if (!any(at)) return(NULL)
+    if (!any(at)) {
+      return(NULL)
+    }
     opts <- paste0(unique(opt_n[which(at)]), collapse = ",")
     s <- if (sum(at) > 1) "s" else ""
 
@@ -170,21 +174,26 @@ verify_define_options_syntax <- function(x) {
   }
 
   issues <- Filter(Negate(is.null), c(
-    issue(no_arg, verbatim = TRUE,
+    issue(no_arg,
+      verbatim = TRUE,
       sprintf("missing argument %s (trailing comma in call)", which(no_arg)[1])
     ),
-    issue(no_desc,
+    issue(
+      no_desc,
       "should begin with an unnamed argument, providing a description of the ",
       "option's behavior."
     ),
-    issue(!no_arg & no_named_arg,
+    issue(
+      !no_arg & no_named_arg,
       "should always follow the description with a named argument to indicate ",
       "the option name and default value."
     ),
-    issue(arg_desc,
+    issue(
+      arg_desc,
       "should not provide a redundant `desc` argument."
     ),
-    issue(arg_name,
+    issue(
+      arg_name,
       "should not provide a redundant `name` argument."
     )
   ))

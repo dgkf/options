@@ -65,7 +65,6 @@ involved definitions to minimize non-standard evaluation bugs.
 define_options(
   "Whether execution should emit console output",
   quiet = FALSE,
-
   "Whether to use detailed console output (showcasing additional
   configuration parameters)",
   verbose = TRUE,

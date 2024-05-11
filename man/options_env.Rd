@@ -2,13 +2,10 @@
 % Please edit documentation in R/options_env.R
 \name{options_env}
 \alias{options_env}
-\alias{get_options_env}
-\alias{get_options_env.options_env}
-\alias{get_options_env.options_list}
-\alias{get_options_env.default}
 \alias{options_initialized}
 \alias{init_options_env}
 \alias{as_options_list}
+\alias{as_options_list.list}
 \alias{as_options_list.options_env}
 \alias{get_option_default_value}
 \alias{get_options_spec}
@@ -16,19 +13,13 @@
 \alias{set_option_spec}
 \title{Options Environment Class}
 \usage{
-get_options_env(env, ...)
-
-\method{get_options_env}{options_env}(env, ...)
-
-\method{get_options_env}{options_list}(env, ...)
-
-\method{get_options_env}{default}(env, ..., inherits = FALSE)
-
 options_initialized(env, inherits = FALSE)
 
 init_options_env(env = parent.frame())
 
 as_options_list(x, ...)
+
+\method{as_options_list}{list}(x, ...)
 
 \method{as_options_list}{options_env}(x, ...)
 
@@ -48,9 +39,9 @@ set_option_spec(name, details, env = parent.frame())
 \arguments{
 \item{env}{An environment in which to search for an options environment}
 
-\item{...}{Additional arguments unused}
-
 \item{inherits}{Whether to search upward through parent environments}
+
+\item{...}{Additional arguments unused}
 }
 \description{
 The options environment stores primarily, the default values for options. In
@@ -59,8 +50,6 @@ attributes.
 }
 \section{Functions}{
 \itemize{
-\item \code{get_options_env()}: Initialize (if needed) and retrieve an environment containing options
-
 \item \code{options_initialized()}: Test whether options is initialized in environment
 
 \item \code{init_options_env()}: Initialize an options object
