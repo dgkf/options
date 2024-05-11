@@ -10,6 +10,7 @@ option_spec(
   desc = NULL,
   option_name = get_option_name_fn(envir),
   envvar_name = get_envvar_name_fn(envir),
+  option_fn = function(value, ...) value,
   envvar_fn = envvar_eval_or_raw(),
   quoted = FALSE,
   eager = FALSE,
@@ -39,8 +40,13 @@ functions which fall back to \code{option_name_default} and
 \code{envvar_name_default}, and can be configured using \code{set_option_name_fn}
 and \code{set_envvar_name_fn}.}
 
+\item{option_fn}{A function to use for processing an option value before
+being returned from the \link{opt} accessor functions. For further details see
+section "Processing Functions".}
+
 \item{envvar_fn}{A function to use for parsing environment variable values.
-Defaults to \code{envvar_eval_or_raw()}.}
+Defaults to \code{envvar_eval_or_raw()}. For further details see section
+"Processing Functions".}
 
 \item{quoted}{A logical value indicating whether the \code{default} argument
 should be treated as a quoted expression or as a value.}
@@ -64,3 +70,42 @@ default value, related global R option, and related environment variable
 name, as well as a description. This information defines the operating
 behavior of the option.
 }
+\section{Processing Functions}{
+Parameters \code{option_fn} and \code{envvar_fn} allow for customizing the way values
+are interpreted and processed before being returned by \code{\link{opt}} functions.
+\subsection{\code{envvar_fn}}{
+
+When a value is retrieved from an environment variable, the string value
+contained in the environment variable is first processed by \code{envvar_fn}.
+
+An \code{envvar_fn} accepts only a single positional argument, and should have a
+signature such as:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{function(value)
+}\if{html}{\out{</div>}}
+}
+
+\subsection{\code{option_fn}}{
+
+Regardless of how a value is produced - either retrieved from an environment
+variable, option, a stored default value or from a default provided to an
+\code{\link{opt}} accessor function - it is then further processed by \code{option_fn}.
+
+The first argument provided to \code{option_fn} will always be the retrieved
+value. The remaining parameters in the signature should be considered
+experimental. In addition to the value, the arguments provided to \code{\link[=opt]{opt()}},
+as well as an additional \code{source} parameter from \code{\link[=opt_source]{opt_source()}} may be
+used.
+
+\strong{Stable}
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{function(value, ...)
+}\if{html}{\out{</div>}}
+
+\strong{Experimental}
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{function(value, x, default, env, ..., source)
+}\if{html}{\out{</div>}}
+}
+}
+

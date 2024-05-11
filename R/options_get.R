@@ -5,7 +5,8 @@
 #' @param value A new value for the associated global option
 #' @param default A default value if the option is not set
 #' @param env An environment, namespace or package name to pull options from
-#' @param ... Additional arguments unused
+#' @param ... Additional arguments passed to an optional `option_fn`. See
+#'   [`option_spec()`] for details.
 #'
 #' @param add,after,scope Passed to [on.exit], with alternative defaults.
 #'   `scope` is passed to the [on.exit] `envir` parameter to disambiguate it
@@ -31,16 +32,28 @@ NULL
 #'
 #' @export
 opt <- function(x, default, env = parent.frame(), ...) {
-  optenv  <- get_options_env(as_env(env), inherits = TRUE)
+  optenv <- get_options_env(as_env(env), inherits = TRUE)
   spec <- get_option_spec(x, env = optenv)
 
-  switch(
-    opt_source(spec, env = optenv),
-    "envir"   = spec$envvar_fn(Sys.getenv(spec$envvar_name), spec$envvar_name),
-    "option"  = getOption(spec$option_name),
+  source <- opt_source(spec, env = optenv)
+  value <- switch(source,
+    "envvar" = spec$envvar_fn(Sys.getenv(spec$envvar_name), spec$envvar_name),
+    "option" = getOption(spec$option_name),
     "default" = get_option_default_value(x, optenv),
-    if (missing(default)) stop(sprintf("option '%s' not found.", x))
-    else default
+    if (missing(default)) {
+      stop(sprintf("option '%s' not found.", x))
+    } else {
+      default
+    }
+  )
+
+  spec$option_fn(
+    value,
+    x = x,
+    default = default,
+    env = env,
+    ...,
+    source = source
   )
 }
 
@@ -58,7 +71,9 @@ opt <- function(x, default, env = parent.frame(), ...) {
 #' @export
 opt_set <- function(x, value, env = parent.frame(), ...) {
   spec <- get_option_spec(x, env = as_env(env), inherits = TRUE, ...)
-  if (is.null(spec)) return(invisible(NULL))
+  if (is.null(spec)) {
+    return(invisible(NULL))
+  }
 
   args <- list(value)
   names(args) <- spec$option_name
@@ -84,7 +99,7 @@ opt_set <- function(x, value, env = parent.frame(), ...) {
 #' behaviors.
 #'
 #' @return For [opt_source]; the source that is used for a specific option,
-#'   one of `"option"`, `"envir"` or `"default"`.
+#'   one of `"option"`, `"envvar"` or `"default"`.
 #'
 #' @examples
 #' define_options("Whether execution should emit console output", quiet = FALSE)
@@ -108,13 +123,13 @@ opt_source <- function(x, env = parent.frame()) {
 
   # determine whether option is set in various places
   opt_sources <- list(
-    option  = function(x) x$option_name %in% names(.Options),
-    envir   = function(x) !is.na(Sys.getenv(x$envvar_name, unset = NA)),
+    option = function(x) x$option_name %in% names(.Options),
+    envvar = function(x) !is.na(Sys.getenv(x$envvar_name, unset = NA)),
     default = function(x) !(is.name(x$expr) && nchar(x$expr) == 0)
   )
 
   # TODO: priority possibly configurable per-option in the future
-  sources <- c("option", "envir", "default")
+  sources <- c("option", "envvar", "default")
 
   for (origin in sources) {
     if (opt_sources[[origin]](x)) {
@@ -169,10 +184,8 @@ opts.list <- function(xs, env = parent.frame()) {
     }
 
     old
-
   } else if (list_is_all_unnamed(xs)) {
     as_options_list(env)[as.character(xs)]
-
   } else {
     stop(paste0(
       "lists provided to `opts()` must either have no names, or names for ",
@@ -203,14 +216,13 @@ opts.character <- function(xs, env = parent.frame()) {
 #'     withr::defer(opt_set("option", old))
 #'
 opt_set_local <- function(
-  x,
-  value,
-  env = parent.frame(),
-  ...,
-  add = TRUE,
-  after = FALSE,
-  scope = parent.frame()
-) {
+    x,
+    value,
+    env = parent.frame(),
+    ...,
+    add = TRUE,
+    after = FALSE,
+    scope = parent.frame()) {
   old <- opt_set(x, value, env = env)
   opt_set_call <- as.call(list(quote(opt_set), x, value = old, env = env))
   on_exit_args <- list(opt_set_call, ..., add = add, after = after)

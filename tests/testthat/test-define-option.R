@@ -157,3 +157,28 @@ test_that("define_option accepts an option_spec object", {
   expect_equal(length(e[[CONST_OPTIONS_ENV_NAME]]), 1)
   expect_equal(opt("A", env = e), 1)
 })
+
+test_that("option_spec option_fn processes option values", {
+  e <- test_env()
+
+  expect_silent(with(e, {
+    options::define_option(options::option_spec(
+      "A",
+      default = 1,
+      desc = "this is option A",
+      option_name = "opt_a",
+      option_fn = function(value, ..., source = source) {
+        print(source)
+        value + 1
+      },
+      envvar_name = "OPT_A"
+    ))
+  }))
+
+  expect_equal(length(e[[CONST_OPTIONS_ENV_NAME]]), 1)
+  expect_output(expect_equal(opt("A", env = e), 2), "default")
+  expect_output(withr::with_envvar(
+    list(OPT_A = "10"),
+    expect_equal(opt("A", env = e), 11)
+  ), "envvar")
+})

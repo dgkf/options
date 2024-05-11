@@ -5,6 +5,49 @@
 #' name, as well as a description. This information defines the operating
 #' behavior of the option.
 #'
+#' @details
+#'
+#' # Processing Functions
+#'
+#' Parameters `option_fn` and `envvar_fn` allow for customizing the way values
+#' are interpreted and processed before being returned by [`opt`] functions.
+#'
+#' ## `envvar_fn`
+#'
+#' When a value is retrieved from an environment variable, the string value
+#' contained in the environment variable is first processed by `envvar_fn`.
+#'
+#' An `envvar_fn` accepts only a single positional argument, and should have a
+#' signature such as:
+#'
+#' ```r
+#' function(value)
+#' ```
+#'
+#' ## `option_fn`
+#'
+#' Regardless of how a value is produced - either retrieved from an environment
+#' variable, option, a stored default value or from a default provided to an
+#' [`opt`] accessor function - it is then further processed by `option_fn`.
+#'
+#' The first argument provided to `option_fn` will always be the retrieved
+#' value. The remaining parameters in the signature should be considered
+#' experimental. In addition to the value, the arguments provided to [`opt()`],
+#' as well as an additional `source` parameter from [`opt_source()`] may be
+#' used.
+#'
+#' **Stable**
+#'
+#' ```
+#' function(value, ...)
+#' ```
+#'
+#' **Experimental**
+#'
+#' ```
+#' function(value, x, default, env, ..., source)
+#' ```
+#'
 #' @param name A string representing the internal name for the option. This is
 #'   the short form `<option>` used within a namespace and relates to, for
 #'   example, `<package>.<option>` global R option.
@@ -23,8 +66,12 @@
 #'   functions which fall back to `option_name_default` and
 #'   `envvar_name_default`, and can be configured using `set_option_name_fn`
 #'   and `set_envvar_name_fn`.
+#' @param option_fn A function to use for processing an option value before
+#'   being returned from the [opt] accessor functions. For further details see
+#'   section "Processing Functions".
 #' @param envvar_fn A function to use for parsing environment variable values.
-#'   Defaults to `envvar_eval_or_raw()`.
+#'   Defaults to `envvar_eval_or_raw()`. For further details see section
+#'   "Processing Functions".
 #' @param quoted A logical value indicating whether the `default` argument
 #'   should be treated as a quoted expression or as a value.
 #' @param eager A logical value indicating whether the `default` argument should
@@ -46,6 +93,7 @@ option_spec <- function(
   desc = NULL,
   option_name = get_option_name_fn(envir),
   envvar_name = get_envvar_name_fn(envir),
+  option_fn = function(value, ...) value,
   envvar_fn = envvar_eval_or_raw(),
   quoted = FALSE,
   eager = FALSE,
@@ -72,6 +120,7 @@ option_spec <- function(
       desc = desc,
       option_name = option_name,
       envvar_name = envvar_name,
+      option_fn = option_fn,
       envvar_fn = envvar_fn,
       envir = envir
     ),
@@ -174,6 +223,8 @@ format_value <- function(x, ..., fmt = NULL) {
   UseMethod("format_value")
 }
 
+#' @method format_value default
+#' @name format_value
 format_value.default <- function(x, ..., fmt = options_fmts()) {
   if (isS4(x))
     UseMethod("format_value", structure(list(), class = "S4"))
