@@ -22,30 +22,51 @@
 #' @keywords internal
 NULL
 
-#' @describeIn options_env
-#' Initialize (if needed) and retrieve an environment containing options
+#' Retrieve options environment (experimental)
+#'
+#' The options environment stores metadata regarding the various options
+#' defined in the local scope - often the top environment of a package
+#' namespace.
+#'
+#' @note This function's public interface is still under consideration. It is
+#'   surfaced to provide access to option names, though the exact mechanism
+#'   of retrieving these names should be considered experimental.
+#'
+#' @inheritParams options_env
+#' @param ifnotfound A result to return of no options environment is found.
+#' @return An environment containing option specifications and default values,
+#'   or `ifnotfound` if no environment is found.
+#'
+#' @export
 get_options_env <- function(env, ...) {
   UseMethod("get_options_env")
 }
 
-#' @name options_env
+#' @export
 get_options_env.options_env <- function(env, ...) {
   env
 }
 
-#' @name options_env
+#' @export
 get_options_env.options_list <- function(env, ...) {
   attr(env, "environment")
 }
 
-#' @name options_env
-get_options_env.default <- function(env, ..., inherits = FALSE) {
-  if (!options_initialized(env, inherits = inherits)) {
+#' @export
+get_options_env.default <- function(
+    env = parent.frame(),
+    ...,
+    inherits = FALSE,
+    ifnotfound = emptyenv()) {
+  if (!missing(env) && !options_initialized(env, inherits = inherits)) {
     init_options_env(env = env)
   }
 
   opt <- get0(CONST_OPTIONS_ENV_NAME, envir = env, inherits = inherits)
   if (!inherits(opt, "options_env")) {
+    if (missing(env)) {
+      return(ifnotfound)
+    }
     stop("options object not found in this environment.")
   }
 
@@ -76,6 +97,11 @@ init_options_env <- function(env = parent.frame()) {
 #' Convert into an options list
 as_options_list <- function(x, ...) {
   UseMethod("as_options_list")
+}
+
+#' @name options_env
+as_options_list.list <- function(x, ...) {
+  structure(x, class = c("options_list", "list"))
 }
 
 #' @name options_env

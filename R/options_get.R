@@ -169,7 +169,11 @@ opts <- function(xs = NULL, env = parent.frame()) {
 #' @export
 opts.NULL <- function(xs, env = parent.frame()) {
   env <- get_options_env(as_env(env), inherits = TRUE)
-  as_options_list(env)
+  res <- as_options_list(list())
+  for (n in names(env)) {
+    res[[n]] <- opt(n, env = env)
+  }
+  res
 }
 
 #' @export
