@@ -4,6 +4,12 @@
   stored option values to be processed, or to produce side-effects when 
   accessed. (@dgkf #12)
 
+## Breaking Changes
+
+* The result of `opt_source()` when a value is derived from an environment
+  variable was changed from `"envir"` to `"envvar"` to be more consistent with
+  the rest of the package's messaging about sources. (@dgkf #12)
+
 # options 0.1.0
 
 * Adds various utility functions for modifying options: `opt_set()`, `opt()<-`
