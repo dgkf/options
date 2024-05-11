@@ -28,14 +28,17 @@ get_options_env <- function(env, ...) {
   UseMethod("get_options_env")
 }
 
+#' @keywords internal
 get_options_env.options_env <- function(env, ...) {
   env
 }
 
+#' @keywords internal
 get_options_env.options_list <- function(env, ...) {
   attr(env, "environment")
 }
 
+#' @keywords internal
 get_options_env.default <- function(env, ..., inherits = FALSE) {
   if (!options_initialized(env, inherits = inherits)) {
     init_options_env(env = env)
@@ -75,6 +78,7 @@ as_options_list <- function(x, ...) {
   UseMethod("as_options_list")
 }
 
+#' @keywords internal
 as_options_list.options_env <- function(x, ...) {
   res <- structure(as.list(x), class = c("options_list", "list"))
 
@@ -111,11 +115,10 @@ get_options_spec <- function(env = parent.frame()) {
 #' @describeIn options_env
 #' Get single option specification
 get_option_spec <- function(
-  name,
-  env = parent.frame(),
-  inherits = FALSE,
-  on_missing = warning
-) {
+    name,
+    env = parent.frame(),
+    inherits = FALSE,
+    on_missing = warning) {
   optenv <- get_options_env(env, inherits = inherits)
   spec <- attr(optenv, "spec")
 
@@ -181,3 +184,16 @@ print.options_env <- function(x, ...) {
 
 #' @exportS3Method print options_list
 print.options_list <- print.options_env
+
+#' @exportS3Method as.list options_env
+as.list.options_env <- function(x) {
+  values <- list()
+  for (n in names(x)) {
+    values[[n]] <- if (do.call(missing, list(n), envir = x)) {
+      bquote()
+    } else {
+      x[[n]]
+    }
+  }
+  values
+}
