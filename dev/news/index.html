@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">options</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.1.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.1.0.9001</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,9 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.0" id="options-020">options 0.2.0<a class="anchor" aria-label="anchor" href="#options-020"></a></h2>
-<ul><li>Adds an optional <code>option_fn</code> parameter to <code>option_spec</code>, allowing for the stored option values to be processed, or to produce side-effects when accessed. (<a href="https://github.com/dgkf" class="external-link">@dgkf</a> <a href="https://github.com/dgkf/options/issues/12" class="external-link">#12</a>)</li>
+<ul><li><p>Fixes <code><a href="../reference/opt.html">opts()</a></code>, which would previously return default values after being updated. Will now appropriately return values just as they would be fetched using <code><a href="../reference/opt.html">opt()</a></code>. (<a href="https://github.com/dgkf" class="external-link">@dgkf</a> <a href="https://github.com/dgkf/options/issues/17" class="external-link">#17</a>)</p></li>
+<li><p>Exposes <code><a href="../reference/get_options_env.html">get_options_env()</a></code> (currently experimental), for the purpose of accessing a listing of option names. (<a href="https://github.com/dgkf" class="external-link">@dgkf</a> <a href="https://github.com/dgkf/options/issues/17" class="external-link">#17</a>)</p></li>
+<li><p>Adds an optional <code>option_fn</code> parameter to <code>option_spec</code>, allowing for the stored option values to be processed, or to produce side-effects when accessed. (<a href="https://github.com/dgkf" class="external-link">@dgkf</a> <a href="https://github.com/dgkf/options/issues/12" class="external-link">#12</a>)</p></li>
 </ul><div class="section level3">
 <h3 id="breaking-changes-0-2-0">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-2-0"></a></h3>
 <ul><li>The result of <code><a href="../reference/opt.html">opt_source()</a></code> when a value is derived from an environment variable was changed from <code>"envir"</code> to <code>"envvar"</code> to be more consistent with the rest of the package’s messaging about sources. (<a href="https://github.com/dgkf" class="external-link">@dgkf</a> <a href="https://github.com/dgkf/options/issues/12" class="external-link">#12</a>)</li>
