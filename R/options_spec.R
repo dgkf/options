@@ -101,17 +101,21 @@ option_spec <- function(
 ) {
   package <- pkgname(envir)
 
-  if (!missing(default) && !quoted && !eager)
+  if (!missing(default) && !quoted && !eager) {
     default <- match.call()[["default"]]
+  }
 
-  if (quoted && eager)
+  if (quoted && eager) {
     default <- eval(default, envir = envir)
+  }
 
-  if (is.function(option_name))
+  if (is.function(option_name)) {
     option_name <- option_name(package, name)
+  }
 
-  if (is.function(envvar_name))
+  if (is.function(envvar_name)) {
     envvar_name <- envvar_name(package, name)
+  }
 
   structure(
     list(
@@ -181,8 +185,8 @@ format.option_spec <- function(x, value, ..., fmt = options_fmts()) {
     # description
     "\n\n", sprintf("%s\n\n", fmt$desc(desc)),
     # defaults
-    " ", format_field("option",  src == "option",  fmt$optname(x$option_name), fmt), "\n",
-    " ", format_field("envvar",  src == "envir",   fmt$optname(x$envvar_name), fmt), envvar_help, "\n",
+    " ", format_field("option", src == "option", fmt$optname(x$option_name), fmt), "\n",
+    " ", format_field("envvar", src == "envvar", fmt$optname(x$envvar_name), fmt), envvar_help, "\n",
     " ", format_field("default", src == "default", deparse(x$expr), fmt),
     collapse = ""
   )
@@ -200,6 +204,7 @@ format.option_spec <- function(x, value, ..., fmt = options_fmts()) {
 #'
 #' @keywords internal
 format_field <- function(field, active, value, fmt = options_fmts()) {
+  active <- isTRUE(active)
   f <- if (active) fmt$field_active else fmt$field_inactive
   paste0(
     fmt$fade(if (active) "*" else " "),
@@ -219,18 +224,22 @@ format_field <- function(field, active, value, fmt = options_fmts()) {
 #'
 #' @keywords internal
 format_value <- function(x, ..., fmt = NULL) {
-  if (missing(x)) return("")
+  if (missing(x)) {
+    return("")
+  }
   UseMethod("format_value")
 }
 
 #' @method format_value default
 #' @name format_value
 format_value.default <- function(x, ..., fmt = options_fmts()) {
-  if (isS4(x))
+  if (isS4(x)) {
     UseMethod("format_value", structure(list(), class = "S4"))
+  }
 
-  if (!is.null(attr(x, "class")))
+  if (!is.null(attr(x, "class"))) {
     UseMethod("format_value", structure(list(), class = "S3"))
+  }
 
   str <- deparse(x)
   fmt$shorthand(paste0(
@@ -277,7 +286,11 @@ format_value.call <- function(x, ..., fmt = options_fmts()) {
 
 #' @name format_value
 format_value.name <- function(x, ..., fmt = options_fmts()) {
-  fmt$shorthand(paste0("`", as.character(x), "`"))
+  name <- as.character(x)
+  if (nchar(name) == 0) {
+    return(fmt$shorthand("<missing>"))
+  }
+  fmt$shorthand(paste0("`", name, "`"))
 }
 
 #' @name format_value

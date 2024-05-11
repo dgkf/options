@@ -16,11 +16,11 @@ pkgname <- function(env = parent.frame()) {
 
 `%||%` <- function(lhs, rhs) if (is.null(lhs)) rhs else lhs
 
-vlapply <- function(..., FUN.VALUE = logical(1L)) {  # nolint object_name_linter
+vlapply <- function(..., FUN.VALUE = logical(1L)) { # nolint object_name_linter
   vapply(..., FUN.VALUE = FUN.VALUE)
 }
 
-vcapply <- function(..., FUN.VALUE = character(1L)) {  # nolint object_name_linter
+vcapply <- function(..., FUN.VALUE = character(1L)) { # nolint object_name_linter
   vapply(..., FUN.VALUE = FUN.VALUE)
 }
 
@@ -55,9 +55,13 @@ raise <- function(x, ...) {
 #' @keywords internal
 raise.character <- function(x, ...) {
   x <- switch(x,
-    "print" = , "info" = , "message" = message,
-    "warn" = , "warning" = warning,
-    "error" = , "stop" = stop
+    "print" = ,
+    "info" = ,
+    "message" = message,
+    "warn" = ,
+    "warning" = warning,
+    "error" = ,
+    "stop" = stop
   )
 
   raise.function(x, ...)

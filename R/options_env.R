@@ -115,11 +115,10 @@ get_options_spec <- function(env = parent.frame()) {
 #' @describeIn options_env
 #' Get single option specification
 get_option_spec <- function(
-  name,
-  env = parent.frame(),
-  inherits = FALSE,
-  on_missing = warning
-) {
+    name,
+    env = parent.frame(),
+    inherits = FALSE,
+    on_missing = warning) {
   optenv <- get_options_env(env, inherits = inherits)
   spec <- attr(optenv, "spec")
 
@@ -185,3 +184,16 @@ print.options_env <- function(x, ...) {
 
 #' @exportS3Method print options_list
 print.options_list <- print.options_env
+
+#' @exportS3Method as.list options_env
+as.list.options_env <- function(x, ...) {
+  values <- list()
+  for (n in names(x)) {
+    values[[n]] <- if (do.call(missing, list(n), envir = x)) {
+      bquote()
+    } else {
+      x[[n]]
+    }
+  }
+  values
+}

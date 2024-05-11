@@ -50,3 +50,10 @@ test_that("options objects prints options in definition order", {
   expect_silent(out <- paste0(capture.output(e$.options), collapse = "\n"))
   expect_match(out, "OPT_B.*OPT_A")
 })
+
+test_that("options objects print even without default", {
+  e <- new.env(parent = baseenv())
+  expect_silent(with(e, options::define_option("B")))
+  expect_silent(out <- paste0(capture.output(e$.options), collapse = "\n"))
+  expect_match(out, "<missing>")
+})
