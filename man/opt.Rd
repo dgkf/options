@@ -90,22 +90,22 @@ option values.
 \code{\link[=on.exit]{on.exit()}}.
 
 \item \code{opts_list()}: Produce a named list of namespaced option values, for use with \code{\link[=options]{options()}}
-and \code{\link{withr}}. Additional \code{...} arguments used to provide named
-option values.
+and \code{\link[withr]{withr}}. Additional \code{...} arguments used to provide
+named option values.
 
 }}
 \note{
 Local options are set with \link{on.exit}, which can be prone to error if
 subsequent calls are not called with \code{add = TRUE} (masking existing
 \link{on.exit} callbacks). A more rigorous alternative might make use of
-\link[withr:defer]{withr::defer}.
+\code{\link[withr:defer]{withr::defer}}.
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{old <- opt_set("option", value)
 withr::defer(opt_set("option", old))
 }\if{html}{\out{</div>}}
 
 If you'd prefer to use this style, see \code{\link[=opts_list]{opts_list()}}, which is designed
-to work nicely with \code{\link{withr}}.
+to work nicely with \code{\link[withr]{withr}}.
 }
 \examples{
 define_options("Whether execution should emit console output", quiet = FALSE)

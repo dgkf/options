@@ -220,13 +220,13 @@ opts.character <- function(xs, env = parent.frame()) {
 #' Local options are set with [on.exit], which can be prone to error if
 #' subsequent calls are not called with `add = TRUE` (masking existing
 #' [on.exit] callbacks). A more rigorous alternative might make use of
-#' [withr::defer].
+#' [`withr::defer`].
 #'
 #'     old <- opt_set("option", value)
 #'     withr::defer(opt_set("option", old))
 #'
 #' If you'd prefer to use this style, see [`opts_list()`], which is designed
-#' to work nicely with [`withr`].
+#' to work nicely with \code{\link[withr]{withr}}.
 #'
 opt_set_local <- function(
     x,
@@ -247,8 +247,8 @@ opt_set_local <- function(
 #' @describeIn opt
 #'
 #' Produce a named list of namespaced option values, for use with [`options()`]
-#' and [`withr`]. Additional `...` arguments used to provide named
-#' option values.
+#' and \code{\link[withr]{withr}}. Additional `...` arguments used to provide
+#' named option values.
 #'
 #' @examples
 #' define_options("print quietly", quiet = TRUE)
