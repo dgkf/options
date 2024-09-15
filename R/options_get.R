@@ -10,6 +10,9 @@
 #'   arguments. In rare cases where your argument names conflict with other
 #'   named arguments to these functions, you can specify them directly using
 #'   this parameter.
+#' @param check_names (experimental) A behavior used when checking option
+#'   names against specified options. Expects one of `"asis"`, `"warn"` or
+#'   `"stop"`.
 #'
 #' @param add,after,scope Passed to [on.exit], with alternative defaults.
 #'   `scope` is passed to the [on.exit] `envir` parameter to disambiguate it
@@ -267,10 +270,16 @@ opt_set_local <- function(
 #' withr::with_options(opts_list(quiet = FALSE), print(example))
 #'
 #' @export
-opts_list <- function(..., env = parent.frame(), opts = list(...)) {
+opts_list <- function(
+  ...,
+  env = parent.frame(),
+  check_names = c("asis", "warn", "error"),
+  opts = list(...)
+) {
   env <- get_options_env(as_env(env), inherits = TRUE)
   spec <- get_options_spec(env)
 
+  as_check_names_fn(check_names)(names(opts))
   names(opts) <- vcapply(names(opts), function(name) {
     if (name %in% names(spec)) {
       spec[[name]]$option_name

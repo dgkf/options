@@ -30,7 +30,12 @@ opt_set_local(
   scope = parent.frame()
 )
 
-opts_list(..., env = parent.frame(), opts = list(...))
+opts_list(
+  ...,
+  env = parent.frame(),
+  check_names = c("asis", "warn", "error"),
+  opts = list(...)
+)
 }
 \arguments{
 \item{x, xs}{An option name, vector of option names, or a named list of new
@@ -47,6 +52,10 @@ option values}
 \item{add, after, scope}{Passed to \link{on.exit}, with alternative defaults.
 \code{scope} is passed to the \link{on.exit} \code{envir} parameter to disambiguate it
 from \code{env}.}
+
+\item{check_names}{(experimental) A behavior used when checking option
+names against specified options. Expects one of \code{"asis"}, \code{"warn"} or
+\code{"stop"}.}
 
 \item{opts}{A \code{list} of values, for use in functions that accept \code{...}
 arguments. In rare cases where your argument names conflict with other
