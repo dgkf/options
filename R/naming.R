@@ -155,3 +155,46 @@ envvar_name_generic <- function(package, option) {
   parts <- c(package, option)
   paste(gsub("[^A-Z0-9]", "_", toupper(parts)), collapse = "_")
 }
+
+
+as_check_names_fn <- function(x) {
+  UseMethod("as_check_names_fn")
+}
+
+#' @export
+as_check_names_fn.character <- function(x) {
+  switch(
+    x[[1]],
+    "warn" = check_names_warn_missing,
+    "error" = check_names_stop_missing,
+    "asis" = identity
+  )
+}
+
+#' @export
+as_check_names_fn.function <- function(x) {
+  x
+}
+
+check_names_warn_missing <- function(optnames, env = parent.frame()) {
+  valid <- names(get_options_spec(env))
+  if (length(miss <- setdiff(optnames, valid)) > 0) {
+    warning(
+      "Option name(s) not found in environment: ",
+      paste0("'", miss, "'", collapse = ", ")
+    )
+  }
+}
+
+check_names_stop_missing <- function(optnames, env = parent.frame()) {
+  valid <- names(get_options_spec(env))
+  if (length(miss <- setdiff(optnames, valid)) > 0) {
+    stop(
+      "Option name(s) not found in environment: ",
+      paste0("'", miss, "'", collapse = ", ")
+    )
+  }
+}
+
+check_names_asis <- function(optnames, env = parent.frame()) {
+}

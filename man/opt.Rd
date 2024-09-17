@@ -7,6 +7,7 @@
 \alias{opt_source}
 \alias{opts}
 \alias{opt_set_local}
+\alias{opts_list}
 \title{Inspecting Option Values}
 \usage{
 opt(x, default, env = parent.frame(), ...)
@@ -28,6 +29,13 @@ opt_set_local(
   after = FALSE,
   scope = parent.frame()
 )
+
+opts_list(
+  ...,
+  env = parent.frame(),
+  check_names = c("asis", "warn", "error"),
+  opts = list(...)
+)
 }
 \arguments{
 \item{x, xs}{An option name, vector of option names, or a named list of new
@@ -37,14 +45,22 @@ option values}
 
 \item{env}{An environment, namespace or package name to pull options from}
 
-\item{...}{Additional arguments passed to an optional \code{option_fn}. See
-\code{\link[=option_spec]{option_spec()}} for details.}
+\item{...}{See specific functions to see behavior.}
 
 \item{value}{A new value to update the associated global option}
 
 \item{add, after, scope}{Passed to \link{on.exit}, with alternative defaults.
 \code{scope} is passed to the \link{on.exit} \code{envir} parameter to disambiguate it
 from \code{env}.}
+
+\item{check_names}{(experimental) A behavior used when checking option
+names against specified options. Expects one of \code{"asis"}, \code{"warn"} or
+\code{"stop"}.}
+
+\item{opts}{A \code{list} of values, for use in functions that accept \code{...}
+arguments. In rare cases where your argument names conflict with other
+named arguments to these functions, you can specify them directly using
+this parameter.}
 }
 \value{
 For \code{opt()} and \code{opts()}; the result of the option (or a list of
@@ -63,11 +79,13 @@ Inspecting Option Values
 }
 \section{Functions}{
 \itemize{
-\item \code{opt()}: Retrieve an option
+\item \code{opt()}: Retrieve an option. Additional \code{...} arguments passed to an optional
+\code{option_fn}. See \code{\link[=option_spec]{option_spec()}} for details.
 
-\item \code{opt_set()}: Set an option's value
+\item \code{opt_set()}: Set an option's value. Additional \code{...} arguments passed to
+\code{\link[=get_option_spec]{get_option_spec()}}.
 
-\item \code{opt(x, ...) <- value}: An alias for \link{opt_set}
+\item \code{opt(x, ...) <- value}: An alias for \code{\link[=opt_set]{opt_set()}}
 
 \item \code{opt_source()}: Determine source of option value. Primarily used for diagnosing options
 behaviors.
@@ -77,18 +95,26 @@ containing all options from a given environment. Accepts a character
 vector of option names or a named list of new values to modify global
 option values.
 
-\item \code{opt_set_local()}: Set an option only in the local frame
+\item \code{opt_set_local()}: Set an option only in the local frame. Additional \code{...} arguments passed to
+\code{\link[=on.exit]{on.exit()}}.
+
+\item \code{opts_list()}: Produce a named list of namespaced option values, for use with \code{\link[=options]{options()}}
+and \code{\link[withr]{withr}}. Additional \code{...} arguments used to provide
+named option values.
 
 }}
 \note{
 Local options are set with \link{on.exit}, which can be prone to error if
 subsequent calls are not called with \code{add = TRUE} (masking existing
 \link{on.exit} callbacks). A more rigorous alternative might make use of
-\link[withr:defer]{withr::defer}.
+\code{\link[withr:defer]{withr::defer}}.
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{old <- opt_set("option", value)
 withr::defer(opt_set("option", old))
 }\if{html}{\out{</div>}}
+
+If you'd prefer to use this style, see \code{\link[=opts_list]{opts_list()}}, which is designed
+to work nicely with \code{\link[withr]{withr}}.
 }
 \examples{
 define_options("Whether execution should emit console output", quiet = FALSE)
@@ -114,4 +140,19 @@ opts(list(quiet = 42, verbose = TRUE))
 # next time we check their values we'll see the modified values
 opts(c("quiet", "verbose"))
 
+define_options("print quietly", quiet = TRUE)
+
+print.example <- function(x, ...) if (!opt("quiet")) NextMethod()
+example <- structure("Hello, World!", class = "example")
+print(example)
+
+# using base R options to manage temporary options
+orig_opts <- options(opts_list(quiet = FALSE))
+print(example)
+options(orig_opts)
+
+\dontshow{if (length(find.package("withr")) > 0L) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+# using `withr` to manage temporary options
+withr::with_options(opts_list(quiet = FALSE), print(example))
+\dontshow{\}) # examplesIf}
 }

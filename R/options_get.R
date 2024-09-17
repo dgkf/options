@@ -5,8 +5,14 @@
 #' @param value A new value for the associated global option
 #' @param default A default value if the option is not set
 #' @param env An environment, namespace or package name to pull options from
-#' @param ... Additional arguments passed to an optional `option_fn`. See
-#'   [`option_spec()`] for details.
+#' @param ... See specific functions to see behavior.
+#' @param opts A `list` of values, for use in functions that accept `...`
+#'   arguments. In rare cases where your argument names conflict with other
+#'   named arguments to these functions, you can specify them directly using
+#'   this parameter.
+#' @param check_names (experimental) A behavior used when checking option
+#'   names against specified options. Expects one of `"asis"`, `"warn"` or
+#'   `"stop"`.
 #'
 #' @param add,after,scope Passed to [on.exit], with alternative defaults.
 #'   `scope` is passed to the [on.exit] `envir` parameter to disambiguate it
@@ -19,7 +25,8 @@ NULL
 
 #' @describeIn opt
 #'
-#' Retrieve an option
+#' Retrieve an option. Additional `...` arguments passed to an optional
+#' `option_fn`. See [`option_spec()`] for details.
 #'
 #' @return For `opt()` and `opts()`; the result of the option (or a list of
 #'   results), either the value from a global option, the result of processing
@@ -61,7 +68,8 @@ opt <- function(x, default, env = parent.frame(), ...) {
 
 #' @describeIn opt
 #'
-#' Set an option's value
+#' Set an option's value. Additional `...` arguments passed to
+#' [`get_option_spec()`].
 #'
 #' @param value A new value to update the associated global option
 #'
@@ -84,7 +92,7 @@ opt_set <- function(x, value, env = parent.frame(), ...) {
 
 #' @describeIn opt
 #'
-#' An alias for [opt_set]
+#' An alias for [`opt_set()`]
 #'
 #' @export
 `opt<-` <- function(x, ..., value) {
@@ -208,16 +216,20 @@ opts.character <- function(xs, env = parent.frame()) {
 
 #' @describeIn opt
 #'
-#' Set an option only in the local frame
+#' Set an option only in the local frame. Additional `...` arguments passed to
+#' [`on.exit()`].
 #'
 #' @note
 #' Local options are set with [on.exit], which can be prone to error if
 #' subsequent calls are not called with `add = TRUE` (masking existing
 #' [on.exit] callbacks). A more rigorous alternative might make use of
-#' [withr::defer].
+#' [`withr::defer`].
 #'
 #'     old <- opt_set("option", value)
 #'     withr::defer(opt_set("option", old))
+#'
+#' If you'd prefer to use this style, see [`opts_list()`], which is designed
+#' to work nicely with \code{\link[withr]{withr}}.
 #'
 opt_set_local <- function(
     x,
@@ -232,4 +244,49 @@ opt_set_local <- function(
   on_exit_args <- list(opt_set_call, ..., add = add, after = after)
   do.call(base::on.exit, on_exit_args, envir = scope)
   invisible(old)
+}
+
+
+#' @describeIn opt
+#'
+#' Produce a named list of namespaced option values, for use with [`options()`]
+#' and \code{\link[withr]{withr}}. Additional `...` arguments used to provide
+#' named option values.
+#'
+#' @examples
+#' define_options("print quietly", quiet = TRUE)
+#'
+#' print.example <- function(x, ...) if (!opt("quiet")) NextMethod()
+#' example <- structure("Hello, World!", class = "example")
+#' print(example)
+#'
+#' # using base R options to manage temporary options
+#' orig_opts <- options(opts_list(quiet = FALSE))
+#' print(example)
+#' options(orig_opts)
+#'
+#' @examplesIf length(find.package("withr")) > 0L
+#' # using `withr` to manage temporary options
+#' withr::with_options(opts_list(quiet = FALSE), print(example))
+#'
+#' @export
+opts_list <- function(
+  ...,
+  env = parent.frame(),
+  check_names = c("asis", "warn", "error"),
+  opts = list(...)
+) {
+  env <- get_options_env(as_env(env), inherits = TRUE)
+  spec <- get_options_spec(env)
+
+  as_check_names_fn(check_names)(names(opts))
+  names(opts) <- vcapply(names(opts), function(name) {
+    if (name %in% names(spec)) {
+      spec[[name]]$option_name
+    } else {
+      name
+    }
+  })
+
+  opts
 }
