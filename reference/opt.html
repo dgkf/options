@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">options</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,6 +62,13 @@
 <span>  add <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  after <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  scope <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">opts_list</span><span class="op">(</span></span>
+<span>  <span class="va">...</span>,</span>
+<span>  env <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sys.parent.html" class="external-link">parent.frame</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  check_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"asis"</span>, <span class="st">"warn"</span>, <span class="st">"error"</span><span class="op">)</span>,</span>
+<span>  opts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -83,8 +90,7 @@ option values</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments passed to an optional <code>option_fn</code>. See
-<code><a href="option_spec.html">option_spec()</a></code> for details.</p></dd>
+<dd><p>See specific functions to see behavior.</p></dd>
 
 
 <dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
@@ -95,6 +101,19 @@ option values</p></dd>
 <dd><p>Passed to <a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit</a>, with alternative defaults.
 <code>scope</code> is passed to the <a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit</a> <code>envir</code> parameter to disambiguate it
 from <code>env</code>.</p></dd>
+
+
+<dt id="arg-check-names">check_names<a class="anchor" aria-label="anchor" href="#arg-check-names"></a></dt>
+<dd><p>(experimental) A behavior used when checking option
+names against specified options. Expects one of <code>"asis"</code>, <code>"warn"</code> or
+<code>"stop"</code>.</p></dd>
+
+
+<dt id="arg-opts">opts<a class="anchor" aria-label="anchor" href="#arg-opts"></a></dt>
+<dd><p>A <code>list</code> of values, for use in functions that accept <code>...</code>
+arguments. In rare cases where your argument names conflict with other
+named arguments to these functions, you can specify them directly using
+this parameter.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -111,25 +130,33 @@ one of <code>"option"</code>, <code>"envvar"</code> or <code>"default"</code>.</
     <div class="section level2">
     <h2 id="functions">Functions<a class="anchor" aria-label="anchor" href="#functions"></a></h2>
 
-<ul><li><p><code>opt()</code>: Retrieve an option</p></li>
-<li><p><code>opt_set()</code>: Set an option's value</p></li>
-<li><p><code>opt(x, ...) &lt;- value</code>: An alias for opt_set</p></li>
+<ul><li><p><code>opt()</code>: Retrieve an option. Additional <code>...</code> arguments passed to an optional
+<code>option_fn</code>. See <code><a href="option_spec.html">option_spec()</a></code> for details.</p></li>
+<li><p><code>opt_set()</code>: Set an option's value. Additional <code>...</code> arguments passed to
+<code><a href="options_env.html">get_option_spec()</a></code>.</p></li>
+<li><p><code>opt(x, ...) &lt;- value</code>: An alias for <code>opt_set()</code></p></li>
 <li><p><code>opt_source()</code>: Determine source of option value. Primarily used for diagnosing options
 behaviors.</p></li>
 <li><p><code>opts()</code>: Retrieve multiple options. When no names are provided, return a list
 containing all options from a given environment. Accepts a character
 vector of option names or a named list of new values to modify global
 option values.</p></li>
-<li><p><code>opt_set_local()</code>: Set an option only in the local frame</p></li>
+<li><p><code>opt_set_local()</code>: Set an option only in the local frame. Additional <code>...</code> arguments passed to
+<code><a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit()</a></code>.</p></li>
+<li><p><code>opts_list()</code>: Produce a named list of namespaced option values, for use with <code><a href="https://rdrr.io/r/base/options.html" class="external-link">options()</a></code>
+and <code><a href="https://withr.r-lib.org/reference/withr.html" class="external-link">withr</a></code>. Additional <code>...</code> arguments used to provide
+named option values.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
     <p>Local options are set with <a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit</a>, which can be prone to error if
 subsequent calls are not called with <code>add = TRUE</code> (masking existing
 <a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit</a> callbacks). A more rigorous alternative might make use of
-<a href="https://withr.r-lib.org/reference/defer.html" class="external-link">withr::defer</a>.</p>
+<code><a href="https://withr.r-lib.org/reference/defer.html" class="external-link">withr::defer</a></code>.</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>old <span class="ot">&lt;-</span> <span class="fu">opt_set</span>(<span class="st">"option"</span>, value)</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>withr<span class="sc">::</span><span class="fu">defer</span>(<span class="fu">opt_set</span>(<span class="st">"option"</span>, old))</span></code></pre><p></p></div>
+<p>If you'd prefer to use this style, see <code>opts_list()</code>, which is designed
+to work nicely with <code><a href="https://withr.r-lib.org/reference/withr.html" class="external-link">withr</a></code>.</p>
     </div>
 
     <div class="section level2">
@@ -214,6 +241,42 @@ subsequent calls are not called with <code>add = TRUE</code> (masking existing
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="defining_options.html">define_options</a></span><span class="op">(</span><span class="st">"print quietly"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold; font-style: italic;">quiet</span> = <span style="color: #0000BB; font-style: italic;">TRUE</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   print quietly</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;">*</span><span style="color: #00BB00;">option</span> <span style="color: #555555;"> : </span><span style="color: #00BBBB;">globalenv.quiet</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;"> </span>envvar <span style="color: #555555;"> : </span><span style="color: #00BBBB;">R_GLOBALENV_QUIET</span> (evaluated if possible, raw string otherwise)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;"> </span>default<span style="color: #555555;"> : </span>TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-weight: bold; font-style: italic;">verbose</span> = <span style="color: #0000BB; font-style: italic;">FALSE</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Verbosity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;">*</span><span style="color: #00BB00;">option</span> <span style="color: #555555;"> : </span><span style="color: #00BBBB;">globalenv.verbose</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;"> </span>envvar <span style="color: #555555;"> : </span><span style="color: #00BBBB;">R_GLOBALENV_VERBOSE</span> (evaluated if possible, raw string otherwise)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  <span style="color: #555555;"> </span>default<span style="color: #555555;"> : </span>FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">print.example</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu">opt</span><span class="op">(</span><span class="st">"quiet"</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/UseMethod.html" class="external-link">NextMethod</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">example</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/structure.html" class="external-link">structure</a></span><span class="op">(</span><span class="st">"Hello, World!"</span>, class <span class="op">=</span> <span class="st">"example"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">example</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># using base R options to manage temporary options</span></span></span>
+<span class="r-in"><span><span class="va">orig_opts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="fu">opts_list</span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">example</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Hello, World!"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "example"</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="va">orig_opts</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># using `withr` to manage temporary options</span></span></span>
+<span class="r-in"><span><span class="fu">withr</span><span class="fu">::</span><span class="fu"><a href="https://withr.r-lib.org/reference/with_options.html" class="external-link">with_options</a></span><span class="op">(</span><span class="fu">opts_list</span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">example</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Hello, World!"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "example"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">options</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +37,10 @@
       <small>Source: <a href="https://github.com/dgkf/options/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.0" id="options-030">options 0.3.0<a class="anchor" aria-label="anchor" href="#options-030"></a></h2>
+<ul><li>Introduces <code><a href="../reference/opt.html">opts_list()</a></code>, a utility for producing a list of option values with appropriate global option names that can be used more readily with <code><a href="https://rdrr.io/r/base/options.html" class="external-link">options()</a></code> and <code><a href="https://withr.r-lib.org/reference/with_options.html" class="external-link">withr::with_options()</a></code>. (<a href="https://github.com/dgkf" class="external-link">@dgkf</a> <a href="https://github.com/dgkf/options/issues/19" class="external-link">#19</a>)</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.0" id="options-020">options 0.2.0<a class="anchor" aria-label="anchor" href="#options-020"></a></h2><p class="text-muted">CRAN release: 2024-05-12</p>
 <ul><li><p>Fixes <code><a href="../reference/opt.html">opts()</a></code>, which would previously return default values after being updated. Will now appropriately return values just as they would be fetched using <code><a href="../reference/opt.html">opt()</a></code>. (<a href="https://github.com/dgkf" class="external-link">@dgkf</a> <a href="https://github.com/dgkf/options/issues/17" class="external-link">#17</a>)</p></li>
