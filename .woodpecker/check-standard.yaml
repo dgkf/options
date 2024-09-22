@@ -3,13 +3,19 @@ matrix:
     # r-hub/containers ubuntu-release
     - ghcr.io/r-hub/containers/ubuntu-release
 
+when:
+  - branch: main
+    event: push
+  - event: pull_request
+  - event: tag
+
 steps:
   - name: setup
     image: ${IMAGE}
     pull: true
     commands:
       - |
-        R << END
+        R --no-save << END
         if (Sys.getenv("_R_CHECK_FORCE_SUGGESTS_", "") == "") {
           Sys.setenv("_R_CHECK_FORCE_SUGGESTS_" = "false")
         }
