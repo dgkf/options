@@ -1,0 +1,44 @@
+matrix:
+  IMAGE: 
+    # r-hub/containers ubuntu-release
+    - ghcr.io/r-hub/containers/ubuntu-release
+
+steps:
+  - name: setup
+    image: ${IMAGE}
+    pull: true
+    commands:
+      - |
+        R << END
+        if (Sys.getenv("_R_CHECK_FORCE_SUGGESTS_", "") == "") {
+          Sys.setenv("_R_CHECK_FORCE_SUGGESTS_" = "false")
+        }
+
+        if (Sys.getenv("_R_CHECK_CRAN_INCOMING_", "") == "") {
+          Sys.setenv("_R_CHECK_CRAN_INCOMING_" = "false")
+        }
+
+        options(
+          repos = "https://cloud.r-project.org",
+          cli.dynamic = FALSE,
+          cli.default_num_colors = 256,
+          crayon.enabled = TRUE
+        )
+
+        if (!requireNamespace("pak", quietly = TRUE)) {
+          install.packages("pak")
+        }
+
+        pak::local_install_dev_deps()        
+
+        if (!requireNamespace("rcmdcheck", quietly = TRUE)) {
+          install.packages("rcmdcheck")
+        }
+
+        rcmdcheck::rcmdcheck(
+          args = c("--no-manual", "--as-cran"),
+          build_args = c("--no-manual"),
+          error_on = "warning",
+          check_dir = "check"
+        )
+        END
