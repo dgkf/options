@@ -14,17 +14,27 @@ steps:
     image: ${IMAGE}
     pull: true
     commands:
+      - cat /etc/os-release >> $(R RHOME)/etc/Renviron.site
       - |
-        R -q -s --no-save << "END"
+        cat << "END" >> $(R RHOME)/etc/Rprofile.site
         options(
           Ncpus = 4,
-          repos = c(CRAN = "https://cloud.r-project.org"),
+          repos = c(
+            P3M = sprintf(
+              "https://p3m.dev/cran/__linux__/%s/latest",
+              if (nchar(envvar <- Sys.getenv("VERSION_CODENAME"))) envvar
+            ),
+            CRAN = "https://cloud.r-project.org"
+          ),
           pak.sysreqs = TRUE,
           cli.dynamic = FALSE,
           cli.default_num_colors = 256,
           crayon.enabled = TRUE
         )
+        END
 
+      - |
+        R -q -s --no-save << "END"
         pak_repo <- sprintf(
           "https://r-lib.github.io/p/pak/stable/%s/%s/%s",
           .Platform$pkgType,
@@ -37,21 +47,12 @@ steps:
         pak::local_install_dev_deps()
         END
 
-  - name: R CMD check
+  - name: check
     image: ${IMAGE}
     pull: true
     commands:
       - |
         R -q -s --no-save << "END"       
-        options(
-          Ncpus = 4,
-          repos = c(CRAN = "https://cloud.r-project.org"),
-          pak.sysreqs = TRUE,
-          cli.dynamic = FALSE,
-          cli.default_num_colors = 256,
-          crayon.enabled = TRUE
-        )
-
         if (Sys.getenv("_R_CHECK_FORCE_SUGGESTS_", "") == "")
           Sys.setenv("_R_CHECK_FORCE_SUGGESTS_" = "false")
 
