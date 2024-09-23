@@ -29,10 +29,9 @@ variables:
         crayon.enabled = TRUE
       )
 
-      cache_path <- file.path("$${PWD}", ".woodpecker", "r-cache-lib")
-      if (!dir.exists(cache_path)) dir.create(cache_path, recursive = TRUE)
-
-      .libPaths(c(cache_path, .libPaths()))
+      lib <- file.path("", "woodpecker", "lib")
+      if (!dir.exists(lib)) dir.create(lib, recursive = TRUE)
+      .libPaths(c(lib, .libPaths()))
       END
 
 steps:
@@ -76,3 +75,16 @@ steps:
           check_dir = "check"
         )
         END
+
+  - name: lint
+    image: ${IMAGE}
+    pull: true
+    commands:
+      - <<: *r_site_config
+      - |
+        R -q -s --no-save << "END"
+        pak::local_install_dev_deps()
+        pak::pkg_install("lintr")       
+        lintr::lint_package()
+        END
+        
