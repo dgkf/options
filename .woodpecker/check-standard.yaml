@@ -15,7 +15,8 @@ steps:
     pull: true
     commands:
       # install pak
-      - R -q -s --no-save << "END"
+      - |
+        R -q -s --no-save << "END"
         pak_repo <- sprintf(
           "https://r-lib.github.io/p/pak/stable/%s/%s/%s",
           .Platform$pkgType,
@@ -28,7 +29,7 @@ steps:
 
       # run R CMD check (using {rcmdcheck})
       - |
-        R -q --no-save << "END"
+        R -q -s --no-save << "END"
         options(
           Ncpus = 4,
           repos = c(CRAN = "https://cloud.r-project.org"),
