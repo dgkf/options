@@ -83,7 +83,7 @@ steps:
       - <<: *r_site_config
       - |
         R -q -s --no-save << "END"
-        pak::local_install_dev_deps()
+        pak::local_install(dependencies = TRUE)
         pak::pkg_install("lintr")       
         lintr::lint_package()
         END
