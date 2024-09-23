@@ -18,14 +18,7 @@ steps:
         R -q --no-save << "END"
         options(
           Ncpus = 4,
-          repos = c(
-            "r-hub/repos" = sprintf(
-              "https://r-lib.github.io/p/pak/stable/%s/%s/%s", 
-              .Platform$pkgType,
-              R.Version()$os,
-              R.Version()$arch
-            )
-          ),
+          repos = c(CRAN = "https://cloud.r-project.org"),
           pak.sysreqs = TRUE,
           cli.dynamic = FALSE,
           cli.default_num_colors = 256,
