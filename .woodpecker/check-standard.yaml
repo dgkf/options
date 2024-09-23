@@ -32,7 +32,7 @@ variables:
       cache_path <- file.path("$${PWD}", ".woodpecker", "r-cache-lib")
       if (!dir.exists(cache_path)) dir.create(cache_path, recursive = TRUE)
 
-      .libPaths(cache_path, .libPaths())
+      .libPaths(c(cache_path, .libPaths()))
       END
 
 steps:
