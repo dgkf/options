@@ -14,6 +14,19 @@ steps:
     image: ${IMAGE}
     pull: true
     commands:
+      # install pak
+      - R -q -s --no-save << "END"
+        pak_repo <- sprintf(
+          "https://r-lib.github.io/p/pak/stable/%s/%s/%s",
+          .Platform$pkgType,
+          R.Version()$os,
+          R.Version()$arch
+        )
+
+        install.packages("pak", repos = pak_repo)
+        END
+
+      # run R CMD check (using {rcmdcheck})
       - |
         R -q --no-save << "END"
         options(
@@ -30,9 +43,6 @@ steps:
 
         if (Sys.getenv("_R_CHECK_CRAN_INCOMING_", "") == "")
           Sys.setenv("_R_CHECK_CRAN_INCOMING_" = "false")
-
-        if (!requireNamespace("pak", quietly = TRUE))
-          install.packages("pak")
 
         if (!requireNamespace("rcmdcheck", quietly = TRUE))
           install.packages("rcmdcheck")
