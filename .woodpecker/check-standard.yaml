@@ -33,10 +33,10 @@ variables:
       if (!dir.exists(cache_path)) dir.create(cache_path, recursive = TRUE)
 
       .libPaths(cache_path, .libPaths())
-      END    
+      END
 
 steps:
-  - name: setup environment
+  - name: setup
     image: ${IMAGE}
     pull: true
     commands:
