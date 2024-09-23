@@ -16,32 +16,35 @@ steps:
     commands:
       - |
         R --no-save << END
-        if (Sys.getenv("_R_CHECK_FORCE_SUGGESTS_", "") == "") {
-          Sys.setenv("_R_CHECK_FORCE_SUGGESTS_" = "false")
-        }
-
-        if (Sys.getenv("_R_CHECK_CRAN_INCOMING_", "") == "") {
-          Sys.setenv("_R_CHECK_CRAN_INCOMING_" = "false")
-        }
-
         options(
-          repos = "https://cloud.r-project.org",
+          Ncpus = 4,
+          repos = c(
+            "r-hub/repos" = sprintf(
+              "https://r-lib.github.io/p/pak/stable/%s/%s/%s", 
+              .Platform$pkgType,
+              R.Version()$os,
+              R.Version()$arch
+            )
+          ),
           pak.sysreqs = TRUE,
           cli.dynamic = FALSE,
           cli.default_num_colors = 256,
           crayon.enabled = TRUE
         )
 
-        if (!requireNamespace("pak", quietly = TRUE)) {
+        if (Sys.getenv("_R_CHECK_FORCE_SUGGESTS_", "") == "")
+          Sys.setenv("_R_CHECK_FORCE_SUGGESTS_" = "false")
+
+        if (Sys.getenv("_R_CHECK_CRAN_INCOMING_", "") == "")
+          Sys.setenv("_R_CHECK_CRAN_INCOMING_" = "false")
+
+        if (!requireNamespace("pak", quietly = TRUE))
           install.packages("pak")
-        }
+
+        if (!requireNamespace("rcmdcheck", quietly = TRUE))
+          install.packages("rcmdcheck")
 
         pak::local_install_dev_deps()        
-
-        if (!requireNamespace("rcmdcheck", quietly = TRUE)) {
-          install.packages("rcmdcheck")
-        }
-
         rcmdcheck::rcmdcheck(
           args = c("--no-manual", "--as-cran"),
           build_args = c("--no-manual"),
