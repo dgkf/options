@@ -9,30 +9,38 @@ when:
   - event: pull_request
   - event: tag
 
+variables:
+  r_site_config: &r_site_config
+    - cat /etc/os-release >> $(R RHOME)/etc/Renviron.site
+    - |
+      cat << END >> $(R RHOME)/etc/Rprofile.site
+      options(
+        Ncpus = 4,
+        repos = c(
+          P3M = sprintf(
+            "https://p3m.dev/cran/__linux__/%s/latest",
+            if (nchar(envvar <- Sys.getenv("VERSION_CODENAME"))) envvar
+          ),
+          CRAN = "https://cloud.r-project.org"
+        ),
+        pak.sysreqs = TRUE,
+        cli.dynamic = FALSE,
+        cli.default_num_colors = 256,
+        crayon.enabled = TRUE
+      )
+
+      cache_path <- file.path("$${PWD}", ".woodpecker", "r-cache-lib")
+      if (!dir.exists(cache_path)) dir.create(cache_path, recursive = TRUE)
+
+      .libPaths(cache_path, .libPaths())
+      END    
+
 steps:
-  - name: setup
+  - name: setup environment
     image: ${IMAGE}
     pull: true
     commands:
-      - cat /etc/os-release >> $(R RHOME)/etc/Renviron.site
-      - |
-        cat << "END" >> $(R RHOME)/etc/Rprofile.site
-        options(
-          Ncpus = 4,
-          repos = c(
-            P3M = sprintf(
-              "https://p3m.dev/cran/__linux__/%s/latest",
-              if (nchar(envvar <- Sys.getenv("VERSION_CODENAME"))) envvar
-            ),
-            CRAN = "https://cloud.r-project.org"
-          ),
-          pak.sysreqs = TRUE,
-          cli.dynamic = FALSE,
-          cli.default_num_colors = 256,
-          crayon.enabled = TRUE
-        )
-        END
-
+      - <<: *r_site_config
       - |
         R -q -s --no-save << "END"
         pak_repo <- sprintf(
@@ -43,7 +51,6 @@ steps:
         )
 
         install.packages("pak", repos = pak_repo)
-        install.packages("rcmdcheck")
         pak::local_install_dev_deps()
         END
 
@@ -51,14 +58,16 @@ steps:
     image: ${IMAGE}
     pull: true
     commands:
+      - <<: *r_site_config
       - |
-        R -q -s --no-save << "END"       
+        R -q -s --no-save << "END"
         if (Sys.getenv("_R_CHECK_FORCE_SUGGESTS_", "") == "")
           Sys.setenv("_R_CHECK_FORCE_SUGGESTS_" = "false")
 
         if (Sys.getenv("_R_CHECK_CRAN_INCOMING_", "") == "")
           Sys.setenv("_R_CHECK_CRAN_INCOMING_" = "false")
 
+        pak::pkg_install("rcmdcheck")
         rcmdcheck::rcmdcheck(
           args = c("--no-manual", "--as-cran"),
           build_args = c("--no-manual"),
