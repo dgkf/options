@@ -15,15 +15,15 @@ steps:
     pull: true
     commands:
       - |
-        R --no-save << END
+        R -q --no-save << END
         options(
           Ncpus = 4,
           repos = c(
             "r-hub/repos" = sprintf(
               "https://r-lib.github.io/p/pak/stable/%s/%s/%s", 
               .Platform$pkgType,
-              R.Version()$os,
-              R.Version()$arch
+              R.Version()$$os,
+              R.Version()$$arch
             )
           ),
           pak.sysreqs = TRUE,
