@@ -50,8 +50,8 @@ steps:
           R.Version()$arch
         )
 
-        install.packages("pak", repos = pak_repo)
         pak::local_install_dev_deps()
+        install.packages("pak", repos = pak_repo)
         END
 
   - name: check
@@ -67,6 +67,7 @@ steps:
         if (Sys.getenv("_R_CHECK_CRAN_INCOMING_", "") == "")
           Sys.setenv("_R_CHECK_CRAN_INCOMING_" = "false")
 
+        pak::local_install_dev_deps()
         pak::pkg_install("rcmdcheck")
         rcmdcheck::rcmdcheck(
           args = c("--no-manual", "--as-cran"),
