@@ -14,9 +14,17 @@ steps:
     image: ${IMAGE}
     pull: true
     commands:
-      # install pak
       - |
         R -q -s --no-save << "END"
+        options(
+          Ncpus = 4,
+          repos = c(CRAN = "https://cloud.r-project.org"),
+          pak.sysreqs = TRUE,
+          cli.dynamic = FALSE,
+          cli.default_num_colors = 256,
+          crayon.enabled = TRUE
+        )
+
         pak_repo <- sprintf(
           "https://r-lib.github.io/p/pak/stable/%s/%s/%s",
           .Platform$pkgType,
@@ -25,11 +33,16 @@ steps:
         )
 
         install.packages("pak", repos = pak_repo)
+        install.packages("rcmdcheck")
+        pak::local_install_dev_deps()
         END
 
-      # run R CMD check (using {rcmdcheck})
+  - name: R CMD check
+    image: ${IMAGE}
+    pull: true
+    commands:
       - |
-        R -q -s --no-save << "END"
+        R -q -s --no-save << "END"       
         options(
           Ncpus = 4,
           repos = c(CRAN = "https://cloud.r-project.org"),
@@ -45,10 +58,6 @@ steps:
         if (Sys.getenv("_R_CHECK_CRAN_INCOMING_", "") == "")
           Sys.setenv("_R_CHECK_CRAN_INCOMING_" = "false")
 
-        if (!requireNamespace("rcmdcheck", quietly = TRUE))
-          install.packages("rcmdcheck")
-
-        pak::local_install_dev_deps()        
         rcmdcheck::rcmdcheck(
           args = c("--no-manual", "--as-cran"),
           build_args = c("--no-manual"),
