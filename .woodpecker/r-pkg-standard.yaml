@@ -69,11 +69,23 @@ steps:
         if (Sys.getenv("_R_CHECK_CRAN_INCOMING_", "") == "")
           Sys.setenv("_R_CHECK_CRAN_INCOMING_" = "false")
 
+
+        # CRAN OMP thread limit (https://stackoverflow.com/a/77323812)
+        # Resolves issue with R CMD check for CPU time exceeding elapsed time
+        Sys.setenv("OMP_THREAD_LIMIT" = 2)
+
         pak::local_install_dev_deps()
         pak::pkg_install("rcmdcheck")
         rcmdcheck::rcmdcheck(
-          args = c("--no-manual", "--no-build-vignettes", "--as-cran", "--no-tests", "--timings"),
-          build_args = c("--no-manual", "--no-build-vignettes"),
+          args = c(
+            "--no-manual",
+            "--as-cran",
+            "--no-tests",
+            "--timings"
+          ),
+          build_args = c(
+            "--no-manual"
+          ),
           error_on = "warning",
           check_dir = "check"
         )
