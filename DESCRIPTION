@@ -16,9 +16,9 @@ License:
     MIT + file LICENSE
 URL:
     https://dgkf.github.io/options/,
-    https://github.com/dgkf/options
+    https://codeberg.org/dgkf/options
 BugReports:
-    https://github.com/dgkf/options/issues
+    https://codeberg.org/dgkf/options/issues
 Imports:
     utils
 Suggests:
