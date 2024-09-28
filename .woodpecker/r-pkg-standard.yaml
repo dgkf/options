@@ -12,7 +12,8 @@ when:
 variables:
   r_site_config: &r_site_config
     - cat /etc/os-release >> $(R RHOME)/etc/Renviron.site
-    - echo "WOODPECKER_TMP=/woodpecker/tmp" >> $(R RHOME)/etc/Renviron.site 
+    - mkdir /woodpecker/tmp && 
+      echo "WOODPECKER_TMP=/woodpecker/tmp" >> $(R RHOME)/etc/Renviron.site 
     - |
       cat << END >> $(R RHOME)/etc/Rprofile.site
       options(
@@ -71,8 +72,8 @@ steps:
         pak::local_install_dev_deps()
         pak::pkg_install("rcmdcheck")
         rcmdcheck::rcmdcheck(
-          args = c("--no-manual", "--as-cran", "--no-tests", "--timings"),
-          build_args = c("--no-manual"),
+          args = c("--no-manual", "--no-build-vignettes", "--as-cran", "--no-tests", "--timings"),
+          build_args = c("--no-manual", "--no-build-vignettes"),
           error_on = "warning",
           check_dir = "check"
         )
@@ -86,7 +87,6 @@ steps:
       - <<: *r_site_config
       - |
         R -q -s --no-save << "END"
-
         pak::local_install_dev_deps()
         pak::pkg_install(c("covr", "xml2"))
 
@@ -105,13 +105,14 @@ steps:
   - name: test
     image: ${IMAGE}
     depends_on: [coverage]
+    skip_clone: true
     pull: true
     commands:
       - |
         echo '─ test results ────────────────────────────────────────────────────────────────'
         find '/woodpecker/tmp/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
 
-  - name: codecov
+  - name: codecov-upload
     image: woodpeckerci/plugin-codecov
     depends_on: [coverage]
     when:
