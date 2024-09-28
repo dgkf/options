@@ -104,8 +104,7 @@ steps:
 
   - name: test
     image: ${IMAGE}
-    depends_on: [test-coverage]
-    runs_on: [success, failure]
+    depends_on: [coverage]
     pull: true
     commands:
       - |
@@ -114,7 +113,7 @@ steps:
 
   - name: codecov
     image: woodpeckerci/plugin-codecov
-    depends_on: [test-coverage]
+    depends_on: [coverage]
     settings:
       files:
         - /woodpecker/tmp/cobertura.xml
