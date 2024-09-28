@@ -108,8 +108,9 @@ steps:
     runs_on: [success, failure]
     pull: true
     commands:
-      - echo '─ test results ────────────────────────────────────────────────────────────────'
-      - find '/woodpecker/tmp/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
+      - |
+        echo '─ test results ────────────────────────────────────────────────────────────────'
+        find '/woodpecker/tmp/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
 
   - name: codecov
     image: woodpeckerci/plugin-codecov
