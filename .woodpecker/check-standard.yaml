@@ -1,0 +1,124 @@
+matrix:
+  IMAGE: 
+    # r-hub/containers ubuntu-release
+    - ghcr.io/r-hub/containers/ubuntu-release
+
+when:
+  - ref: HEAD
+    event: push
+  - event: pull_request
+  - event: tag
+
+variables:
+  r_site_config: &r_site_config
+    - cat /etc/os-release >> $(R RHOME)/etc/Renviron.site
+    - mkdir /woodpecker/tmp && 
+      echo "WOODPECKER_TMP=/woodpecker/tmp" >> $(R RHOME)/etc/Renviron.site 
+    - |
+      cat << END >> $(R RHOME)/etc/Rprofile.site
+      options(
+        Ncpus = 4,
+        repos = c(
+          "p3m.dev" = sprintf(
+            "https://p3m.dev/cran/__linux__/%s/latest",
+            if (nchar(envvar <- Sys.getenv("VERSION_CODENAME"))) envvar
+          ),
+          CRAN = "https://cloud.r-project.org"
+        ),
+        pak.sysreqs = TRUE,
+        cli.dynamic = FALSE,
+        cli.default_num_colors = 256,
+        crayon.enabled = TRUE
+      )
+
+      lib <- file.path("", "woodpecker", "lib")
+      if (!dir.exists(lib)) dir.create(lib, recursive = TRUE)
+      .libPaths(c(lib, .libPaths()))
+      END
+
+steps:
+  - name: setup
+    image: ${IMAGE}
+    pull: true
+    commands:
+      - <<: *r_site_config
+      - |
+        R -q -s --no-save << "END"
+        pak_repo <- sprintf(
+          "https://r-lib.github.io/p/pak/stable/%s/%s/%s",
+          .Platform$pkgType,
+          R.Version()$os,
+          R.Version()$arch
+        )
+
+        install.packages("pak", repos = pak_repo)
+        pak::local_install_dev_deps()
+        END
+
+  - name: check
+    image: ${IMAGE}
+    depends_on: [setup]
+    pull: true
+    commands:
+      - <<: *r_site_config
+      - |
+        R -q -s --no-save << "END"
+        if (Sys.getenv("_R_CHECK_FORCE_SUGGESTS_", "") == "")
+          Sys.setenv("_R_CHECK_FORCE_SUGGESTS_" = "false")
+
+        if (Sys.getenv("_R_CHECK_CRAN_INCOMING_", "") == "")
+          Sys.setenv("_R_CHECK_CRAN_INCOMING_" = "false")
+
+        pak::local_install_dev_deps()
+        pak::pkg_install("rcmdcheck")
+        rcmdcheck::rcmdcheck(
+          args = c("--no-manual", "--no-build-vignettes", "--as-cran", "--no-tests", "--timings"),
+          build_args = c("--no-manual", "--no-build-vignettes"),
+          error_on = "warning",
+          check_dir = "check"
+        )
+        END
+
+  - name: coverage
+    image: ${IMAGE}
+    depends_on: [setup]
+    pull: true
+    commands:
+      - <<: *r_site_config
+      - |
+        R -q -s --no-save << "END"
+        pak::local_install_dev_deps()
+        pak::pkg_install(c("covr", "xml2"))
+
+        woodpecker_tmp <- normalizePath(Sys.getenv("WOODPECKER_TMP"), winslash = "/")
+        woodpecker_package <- file.path(woodpecker_tmp, "package")
+        cov <- covr::package_coverage(
+          quiet = FALSE,
+          clean = FALSE,
+          install_path = woodpecker_package
+        )
+
+        woodpecker_cobertura_xml <- file.path(woodpecker_tmp, "cobertura.xml")
+        covr::to_cobertura(cov, filename = woodpecker_cobertura_xml)
+        END
+
+  - name: test
+    image: ${IMAGE}
+    depends_on: [coverage]
+    pull: true
+    commands:
+      - |
+        echo '─ test results ────────────────────────────────────────────────────────────────'
+        find '/woodpecker/tmp/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
+
+  - name: codecov-upload
+    image: woodpeckerci/plugin-codecov
+    depends_on: [coverage]
+    when:
+      - ref: HEAD
+        event: push
+    settings:
+      files:
+        - /woodpecker/tmp/cobertura.xml
+      token:
+        from_secret: codecov_token
