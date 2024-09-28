@@ -69,7 +69,6 @@ steps:
         if (Sys.getenv("_R_CHECK_CRAN_INCOMING_", "") == "")
           Sys.setenv("_R_CHECK_CRAN_INCOMING_" = "false")
 
-
         # CRAN OMP thread limit (https://stackoverflow.com/a/77323812)
         # Resolves issue with R CMD check for CPU time exceeding elapsed time
         Sys.setenv("OMP_THREAD_LIMIT" = 2)
@@ -104,6 +103,8 @@ steps:
 
         woodpecker_tmp <- normalizePath(Sys.getenv("WOODPECKER_TMP"), winslash = "/")
         woodpecker_package <- file.path(woodpecker_tmp, "package")
+        dir.create(woodpecker_package, recursive = TRUE)
+
         cov <- covr::package_coverage(
           quiet = FALSE,
           clean = FALSE,
