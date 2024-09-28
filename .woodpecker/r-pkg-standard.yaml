@@ -12,12 +12,13 @@ when:
 variables:
   r_site_config: &r_site_config
     - cat /etc/os-release >> $(R RHOME)/etc/Renviron.site
+    - echo "WOODPECKER_TMP=/woodpecker/tmp" >> $(R RHOME)/etc/Renviron.site 
     - |
       cat << END >> $(R RHOME)/etc/Rprofile.site
       options(
         Ncpus = 4,
         repos = c(
-          P3M = sprintf(
+          "p3m.dev" = sprintf(
             "https://p3m.dev/cran/__linux__/%s/latest",
             if (nchar(envvar <- Sys.getenv("VERSION_CODENAME"))) envvar
           ),
@@ -49,12 +50,13 @@ steps:
           R.Version()$arch
         )
 
-        pak::local_install_dev_deps()
         install.packages("pak", repos = pak_repo)
+        pak::local_install_dev_deps()
         END
 
   - name: check
     image: ${IMAGE}
+    depends_on: [setup]
     pull: true
     commands:
       - <<: *r_site_config
@@ -69,22 +71,51 @@ steps:
         pak::local_install_dev_deps()
         pak::pkg_install("rcmdcheck")
         rcmdcheck::rcmdcheck(
-          args = c("--no-manual", "--as-cran"),
+          args = c("--no-manual", "--as-cran", "--no-tests", "--timings"),
           build_args = c("--no-manual"),
           error_on = "warning",
           check_dir = "check"
         )
         END
 
-  - name: lint
+  - name: coverage
     image: ${IMAGE}
+    depends_on: [setup]
     pull: true
     commands:
       - <<: *r_site_config
       - |
         R -q -s --no-save << "END"
-        pak::local_install(dependencies = TRUE)
-        pak::pkg_install("lintr")       
-        lintr::lint_package()
+
+        pak::local_install_dev_deps()
+        pak::pkg_install(c("covr", "xml2"))
+
+        woodpecker_tmp <- normalizePath(Sys.getenv("WOODPECKER_TMP"), winslash = "/")
+        woodpecker_package <- file.path(woodpecker_tmp, "package")
+        cov <- covr::package_coverage(
+          quiet = FALSE,
+          clean = FALSE,
+          install_path = woodpecker_package
+        )
+
+        woodpecker_cobertura_xml <- file.path(woodpecker_tmp, "cobertura.xml")
+        covr::to_cobertura(cov, filename = woodpecker_cobertura_xml)
         END
-        
+
+  - name: test
+    image: ${IMAGE}
+    depends_on: [test-coverage]
+    runs_on: [success, failure]
+    pull: true
+    commands:
+      - echo '─ test results ────────────────────────────────────────────────────────────────'
+      - find '/woodpecker/tmp/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
+
+  - name: codecov
+    image: woodpeckerci/plugin-codecov
+    depends_on: [test-coverage]
+    settings:
+      files:
+        - /woodpecker/tmp/cobertura.xml
+      token:
+        from_secret: codecov_token
