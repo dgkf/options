@@ -15,6 +15,7 @@ variables:
     - cat /etc/os-release >> "$(R RHOME)/etc/Renviron.site"
     - echo "WOODPECKER_TMP=/woodpecker/tmp" >> "$(R RHOME)/etc/Renviron.site"
     - cat "$(R RHOME)/etc/Renviron.site"
+    - ls /woodpecker/tmp
 
     - |
       cat << END >> $(R RHOME)/etc/Rprofile.site
