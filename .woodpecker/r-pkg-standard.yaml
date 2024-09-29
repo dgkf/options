@@ -128,7 +128,7 @@ steps:
     image: woodpeckerci/plugin-codecov
     depends_on: [coverage]
     when:
-      - ref: HEAD
+      - branch: "${CI_REPO_DEFAULT_BRANCH}"
         event: push
     settings:
       files:
