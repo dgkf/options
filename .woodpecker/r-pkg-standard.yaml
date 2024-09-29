@@ -131,6 +131,7 @@ steps:
       - branch: "${CI_REPO_DEFAULT_BRANCH}"
         event: push
     settings:
+      verbose: true
       files:
         - /woodpecker/tmp/cobertura.xml
       token:
