@@ -33,14 +33,15 @@ variables:
       )
 
       local({
+        tmp <- normalizePath(Sys.getenv("WOODPECKER_TMP"), winslash = "/")
+        if (!dir.exists(tmp)) dir.create(tmp, recursive = TRUE)
+
         lib <- file.path("", "woodpecker", "lib")
         if (!dir.exists(lib)) dir.create(lib, recursive = TRUE)
 
-        tmp <- normalizePath(Sys.getenv("WOODPECKER_TMP"), winslash = "/")
-        if (!dir.exists(tmp)) dir.create(tmp, recursive = TRUE)
+        .libPaths(c(lib, .libPaths()))
       })
 
-      .libPaths(c(lib, .libPaths()))
       END
 
 steps:
