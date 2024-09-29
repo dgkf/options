@@ -7,3 +7,5 @@
 ^pkgdown$
 
 ^inst/options\.example/man$
+
+^.woodpecker
