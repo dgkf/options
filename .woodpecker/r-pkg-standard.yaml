@@ -13,7 +13,6 @@ variables:
   r_site_config: &r_site_config
     - cat /etc/os-release >> "$(R RHOME)/etc/Renviron.site"
     - echo "WOODPECKER_TMP=/woodpecker/tmp" >> "$(R RHOME)/etc/Renviron.site"
-    - cat "$(R RHOME)/etc/Renviron.site"
 
     - |
       cat << END >> $(R RHOME)/etc/Rprofile.site
