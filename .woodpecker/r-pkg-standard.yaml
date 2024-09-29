@@ -90,7 +90,7 @@ steps:
         )
         END
 
-  - name: coverage
+  - name: test
     image: ${IMAGE}
     depends_on: [setup]
     pull: true
@@ -103,7 +103,6 @@ steps:
 
         woodpecker_tmp <- normalizePath(Sys.getenv("WOODPECKER_TMP"), winslash = "/")
         woodpecker_package <- file.path(woodpecker_tmp, "package")
-        dir.create(woodpecker_package, recursive = TRUE)
 
         cov <- covr::package_coverage(
           quiet = FALSE,
@@ -114,12 +113,6 @@ steps:
         woodpecker_cobertura_xml <- file.path(woodpecker_tmp, "cobertura.xml")
         covr::to_cobertura(cov, filename = woodpecker_cobertura_xml)
         END
-
-  - name: test
-    image: ${IMAGE}
-    depends_on: [coverage]
-    pull: true
-    commands:
       - |
         echo '─ test results ────────────────────────────────────────────────────────────────'
         find '/woodpecker/tmp/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
