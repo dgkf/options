@@ -33,7 +33,7 @@ variables:
       )
 
       local({
-        tmp <- normalizePath(Sys.getenv("WOODPECKER_TMP"), winslash = "/")
+        tmp <- Sys.getenv("WOODPECKER_TMP")
         if (!dir.exists(tmp)) dir.create(tmp, recursive = TRUE)
 
         lib <- file.path("", "woodpecker", "lib")
@@ -108,6 +108,8 @@ steps:
         R -q -s --no-save << "END"
         pak::local_install_dev_deps()
         pak::pkg_install(c("covr", "xml2"))
+
+        woodpecker_tmp <- normalizePath(Sys.getenv("WOODPECKER_TMP"), winslash = "/")
         woodpecker_package <- file.path(woodpecker_tmp, "package")
 
         cov <- covr::package_coverage(
