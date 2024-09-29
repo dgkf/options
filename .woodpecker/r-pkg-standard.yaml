@@ -4,7 +4,7 @@ matrix:
     - ghcr.io/r-hub/containers/ubuntu-release
 
 when:
-  - ref: HEAD
+  - branch: "${CI_REPO_DEFAULT_BRANCH}"
     event: push
   - event: pull_request
   - event: tag
