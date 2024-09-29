@@ -11,11 +11,9 @@ when:
 
 variables:
   r_site_config: &r_site_config
-    - mkdir /woodpecker/tmp
     - cat /etc/os-release >> "$(R RHOME)/etc/Renviron.site"
     - echo "WOODPECKER_TMP=/woodpecker/tmp" >> "$(R RHOME)/etc/Renviron.site"
     - cat "$(R RHOME)/etc/Renviron.site"
-    - ls /woodpecker/tmp
 
     - |
       cat << END >> $(R RHOME)/etc/Rprofile.site
@@ -34,8 +32,14 @@ variables:
         crayon.enabled = TRUE
       )
 
-      lib <- file.path("", "woodpecker", "lib")
-      if (!dir.exists(lib)) dir.create(lib, recursive = TRUE)
+      local({
+        lib <- file.path("", "woodpecker", "lib")
+        if (!dir.exists(lib)) dir.create(lib, recursive = TRUE)
+
+        tmp <- normalizePath(Sys.getenv("WOODPECKER_TMP"), winslash = "/")
+        if (!dir.exists(tmp)) dir.create(tmp, recursive = TRUE)
+      })
+
       .libPaths(c(lib, .libPaths()))
       END
 
@@ -103,8 +107,6 @@ steps:
         R -q -s --no-save << "END"
         pak::local_install_dev_deps()
         pak::pkg_install(c("covr", "xml2"))
-
-        woodpecker_tmp <- normalizePath(Sys.getenv("WOODPECKER_TMP"), winslash = "/")
         woodpecker_package <- file.path(woodpecker_tmp, "package")
 
         cov <- covr::package_coverage(
