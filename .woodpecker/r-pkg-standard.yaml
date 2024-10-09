@@ -132,6 +132,7 @@ steps:
       - |
         R -q -s --no-save << "END"
         pak::local_install_dev_deps()
+        pak::pkg_install(".")
         pak::pkg_install("pkgdown")
         woodpecker_tmp <- normalizePath(Sys.getenv("WOODPECKER_TMP"), winslash = "/")
         woodpecker_pages <- file.path(woodpecker_tmp, "pages")
