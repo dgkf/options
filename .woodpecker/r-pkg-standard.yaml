@@ -124,16 +124,36 @@ steps:
         echo '─ test results ────────────────────────────────────────────────────────────────'
         find '/woodpecker/tmp/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
 
-  - name: codecov-upload
-    image: woodpeckerci/plugin-codecov
-    depends_on: [test]
+  - name: pkgdown
+    image: ${IMAGE}
+    depends_on: [setup]
+    commands:
+      - <<: *r_site_config
+      - |
+        R -q -s --no-save << "END"
+        pak::local_install_dev_deps()
+        pak::pkg_install("pkgdown")
+        woodpecker_tmp <- normalizePath(Sys.getenv("WOODPECKER_TMP"), winslash = "/")
+        woodpecker_pages <- file.path(woodpecker_tmp, "pages")
+        pkg <- pkgdown::as_pkgdown(".", override = list(destination = woodpecker_pages))
+        pkgdown::build_site(pkg, new_process = FALSE, install = FALSE)
+        END
+
+  - name: deploy
+    image: alpine/git
+    depends_on: [pkgdown]
     when:
       - branch: "${CI_REPO_DEFAULT_BRANCH}"
         event: push
-    settings:
-      verbose: true
-      files:
-        - /woodpecker/tmp/cobertura.xml
-      token:
-        from_secret: codecov_token
+    secrets:
+      - deploy_ssh_key
+    commands:
+      - export WOODPECKER_TMP_DEPLOY=${WOODPECKER_TMP}/deploy
+      - echo "${DEPLOY_SSH_KEY}" | ssh-add -
+      - git clone ${CI_REPO_CLONE_SSH_URL} ${WOODPECKER_TMP_DEPLOY}
+      - cd ${WOODPECKER_TMP_DEPLOY}
+      - git switch --orphan pages
+      - git rm --cached -r .
+      - cp -r ${WOODPECKER_TMP}/pages/ .
+      - git push
 
