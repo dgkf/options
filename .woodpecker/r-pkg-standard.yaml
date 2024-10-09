@@ -149,7 +149,7 @@ steps:
     secrets:
       - deploy_ssh_key
     commands:
-      - export WOODPECKER_TMP_DEPLOY=$${WOODPECKER_TMP}/deploy
+      - export WOODPECKER_TMP_DEPLOY=/woodpecker/tmp/deploy
       - eval $(ssh-agent -s)
       - echo "$${DEPLOY_SSH_KEY}" | ssh-add -
       - git clone $${CI_REPO_CLONE_SSH_URL} $${WOODPECKER_TMP_DEPLOY}
