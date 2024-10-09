@@ -153,7 +153,7 @@ steps:
       - eval $(ssh-agent -s)
       - echo "$${DEPLOY_SSH_KEY}" | ssh-add -
       - mkdir -p ~/.ssh
-      - ssh-keyscan -H  >> ~/.ssh/known_hosts
+      - ssh-keyscan -H codeberg.org >> ~/.ssh/known_hosts
       - git clone $${CI_REPO_CLONE_SSH_URL} $${WOODPECKER_TMP_DEPLOY}
       - cd $${WOODPECKER_TMP_DEPLOY}
       - git switch --orphan pages
