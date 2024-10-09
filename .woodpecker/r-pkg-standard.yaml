@@ -150,6 +150,7 @@ steps:
       - deploy_ssh_key
     commands:
       - export WOODPECKER_TMP_DEPLOY=$${WOODPECKER_TMP}/deploy
+      - eval $(ssh-agent -s)
       - echo "$${DEPLOY_SSH_KEY}" | ssh-add -
       - git clone $${CI_REPO_CLONE_SSH_URL} $${WOODPECKER_TMP_DEPLOY}
       - cd $${WOODPECKER_TMP_DEPLOY}
