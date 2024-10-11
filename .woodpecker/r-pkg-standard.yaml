@@ -154,15 +154,22 @@ steps:
       - <<: *site_config
       - export GIT_USER_NAME=$$(git log -1 --pretty=format:'%an')
       - export GIT_USER_EMAIL=$$(git log -1 --pretty=format:'%ae')
+
+      # set up ssh key, apply known hosts
       - eval $(ssh-agent -s)
       - echo "$${DEPLOY_SSH_KEY}" | ssh-add -
       - mkdir -p ~/.ssh
       - ssh-keyscan -H codeberg.org >> ~/.ssh/known_hosts
+
+      # clone repo, create new branch, copy in pages
       - git clone $${CI_REPO_CLONE_SSH_URL} $${WOODPECKER_TMP}/deploy
       - cd $${WOODPECKER_TMP}/deploy
       - git switch --orphan pages
+      - git branch --set-upstream-to origin pages
       - git rm --cached --ignore-unmatch -r .
       - cp -r $${WOODPECKER_TMP}/pages/ .
+
+      # commit new pages contents & deploy
       - git add -A
       - git config --global user.name $${GIT_USER_NAME}
       - git config --global user.email $${GIT_USER_EMAIL}
