@@ -166,7 +166,7 @@ steps:
       - cd $${WOODPECKER_TMP}/deploy
       - git switch --orphan pages
       - git rm --cached --ignore-unmatch -r .
-      - cp -r $${WOODPECKER_TMP}/pages/ .
+      - cp -r $${WOODPECKER_TMP}/pages/* .
 
       # commit new pages contents & deploy
       - git add -A
