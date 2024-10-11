@@ -157,7 +157,9 @@ steps:
       - git clone $${CI_REPO_CLONE_SSH_URL} $${WOODPECKER_TMP_DEPLOY}
       - cd $${WOODPECKER_TMP_DEPLOY}
       - git switch --orphan pages
-      - git rm --cached -r .
+      - git rm --cached --ignore-unmatch -r .
       - cp -r $${WOODPECKER_TMP}/pages/ .
+      - git add -A
+      - git commit -m "deploy to pages from ${CI_COMMIT_BRANCH} @ ${CI_COMMIT_SHA:0:8}"
       - git push
 
