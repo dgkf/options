@@ -152,6 +152,8 @@ steps:
       - deploy_ssh_key
     commands:
       - <<: *site_config
+      - export GIT_USER_NAME=$$(git log -1 --pretty=format:'%an')
+      - export GIT_USER_EMAIL=$$(git log -1 --pretty=format:'%ae')
       - eval $(ssh-agent -s)
       - echo "$${DEPLOY_SSH_KEY}" | ssh-add -
       - mkdir -p ~/.ssh
@@ -162,6 +164,8 @@ steps:
       - git rm --cached --ignore-unmatch -r .
       - cp -r $${WOODPECKER_TMP}/pages/ .
       - git add -A
+      - git config --global user.name $${GIT_USER_NAME}
+      - git config --global user.email $${GIT_USER_EMAIL}
       - git commit -m "deploy to pages from $${CI_COMMIT_BRANCH} @ $${CI_COMMIT_SHA:0:8}"
       - git push
 
