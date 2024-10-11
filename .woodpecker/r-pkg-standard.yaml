@@ -10,6 +10,8 @@ when:
   - event: tag
 
 variables:
+  site_config: &site_config
+    - export WOODPECKER_TMP=/woodpecker/tmp
   r_site_config: &r_site_config
     - cat /etc/os-release >> "$(R RHOME)/etc/Renviron.site"
     - echo "WOODPECKER_TMP=/woodpecker/tmp" >> "$(R RHOME)/etc/Renviron.site"
@@ -149,17 +151,17 @@ steps:
     secrets:
       - deploy_ssh_key
     commands:
-      - export WOODPECKER_TMP_DEPLOY=/woodpecker/tmp/deploy
+      - <<: *site_config
       - eval $(ssh-agent -s)
       - echo "$${DEPLOY_SSH_KEY}" | ssh-add -
       - mkdir -p ~/.ssh
       - ssh-keyscan -H codeberg.org >> ~/.ssh/known_hosts
-      - git clone $${CI_REPO_CLONE_SSH_URL} $${WOODPECKER_TMP_DEPLOY}
-      - cd $${WOODPECKER_TMP_DEPLOY}
+      - git clone $${CI_REPO_CLONE_SSH_URL} $${WOODPECKER_TMP}/deploy
+      - cd $${WOODPECKER_TMP}/deploy
       - git switch --orphan pages
       - git rm --cached --ignore-unmatch -r .
       - cp -r $${WOODPECKER_TMP}/pages/ .
       - git add -A
-      - git commit -m "deploy to pages from ${CI_COMMIT_BRANCH} @ ${CI_COMMIT_SHA:0:8}"
+      - git commit -m "deploy to pages from $${CI_COMMIT_BRANCH} @ $${CI_COMMIT_SHA:0:8}"
       - git push
 
