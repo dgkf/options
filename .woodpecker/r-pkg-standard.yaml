@@ -165,7 +165,6 @@ steps:
       - git clone $${CI_REPO_CLONE_SSH_URL} $${WOODPECKER_TMP}/deploy
       - cd $${WOODPECKER_TMP}/deploy
       - git switch --orphan pages
-      - git branch --set-upstream-to origin pages
       - git rm --cached --ignore-unmatch -r .
       - cp -r $${WOODPECKER_TMP}/pages/ .
 
@@ -174,5 +173,6 @@ steps:
       - git config --global user.name $${GIT_USER_NAME}
       - git config --global user.email $${GIT_USER_EMAIL}
       - git commit -m "deploy to pages from $${CI_COMMIT_BRANCH} @ $${CI_COMMIT_SHA:0:8}"
+      - git branch --set-upstream-to origin pages
       - git push
 
