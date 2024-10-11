@@ -149,6 +149,12 @@ steps:
       - branch: "${CI_REPO_DEFAULT_BRANCH}"
         event: push
     secrets:
+      # expects woodpecker ci ssh access
+      #   - generated with `ssh-keygen -t ed25519 -f /tmp/key`
+      #   - private key: store as woodpecker ci secret `deploy_ssh_key`,
+      #     optionally set only accessible in `alpine/git` image
+      #   - public key: provide as a Deploy Key in codeberg repository
+      #     settings, granting write access to repository
       - deploy_ssh_key
     commands:
       - <<: *site_config
