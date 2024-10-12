@@ -171,7 +171,7 @@ steps:
       - git clone --depth 1 $${CI_REPO_CLONE_SSH_URL} $${WOODPECKER_TMP}/deploy
       - cd $${WOODPECKER_TMP}/deploy
       - git switch --orphan pages
-      - git pull origin pages
+      - git pull origin pages || echo "pages branch not found, creating ..."
       - git rm --cached --ignore-unmatch -r .
       - cp -r $${WOODPECKER_TMP}/pages/* .
 
