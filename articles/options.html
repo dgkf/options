@@ -53,11 +53,13 @@
 
 
 
-<script src="options_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+
+<div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>options</h1>
-            <h3 data-toc-skip class="subtitle"><em>Simple, Consistent Package Options</em></h3>
+            <h3 data-toc-skip class="subtitle"><em>Simple, Consistent
+Package Options</em></h3>
             
       
       <small class="dont-index">Source: <a href="https://github.com/dgkf/options/blob/HEAD/vignettes/options.Rmd" class="external-link"><code>vignettes/options.Rmd</code></a></small>
@@ -66,12 +68,18 @@
 
     
     
-<p>R’s options are a useful tool for managing global settings. <code>options</code> aims to make them easy to configure and use, reduce boilerplate code and handle more involved options handling so you don’t have to.</p>
+<p>R’s options are a useful tool for managing global settings.
+<code>options</code> aims to make them easy to configure and use, reduce
+boilerplate code and handle more involved options handling so you don’t
+have to.</p>
 <div class="section level2">
 <h2 id="defining-options">Defining Options<a class="anchor" aria-label="anchor" href="#defining-options"></a>
 </h2>
-<p>While writing your package, we start by defining which options our package might use.</p>
-<p>Define your options using the <code><a href="../reference/defining_options.html">define_options()</a></code> shorthand. Interlace descriptions and default values to define multiple options at once.</p>
+<p>While writing your package, we start by defining which options our
+package might use.</p>
+<p>Define your options using the <code><a href="../reference/defining_options.html">define_options()</a></code>
+shorthand. Interlace descriptions and default values to define multiple
+options at once.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">options</span><span class="fu">::</span><span class="fu"><a href="../reference/defining_options.html">define_options</a></span><span class="op">(</span></span>
 <span>  <span class="st">"This is an example of how a package author would document their internally</span></span>
@@ -87,7 +95,8 @@
 <span><span class="st">  without worrying about build-time evaluation order"</span>,</span>
 <span>  lazy_example <span class="op">=</span> <span class="fu">fn_not_defined_until_later</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>When you want more control, you can use <code><a href="../reference/defining_options.html">define_option()</a></code> to declare all aspects of how your option behaves.</p>
+<p>When you want more control, you can use <code><a href="../reference/defining_options.html">define_option()</a></code>
+to declare all aspects of how your option behaves.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">options</span><span class="fu">::</span><span class="fu"><a href="../reference/defining_options.html">define_option</a></span><span class="op">(</span></span>
 <span>  option <span class="op">=</span> <span class="st">"concrete_example"</span>,</span>
@@ -104,11 +113,16 @@
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
 </h2>
-<p>As long as the options have been created as shown above, documenting your options is as easy as adding this small roxygen stub within your package.</p>
+<p>As long as the options have been created as shown above, documenting
+your options is as easy as adding this small roxygen stub within your
+package.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' @eval options::as_roxygen_docs()</span></span>
 <span><span class="cn">NULL</span></span></code></pre></div>
-<p>Which produces a <code>?mypackage::options</code> help page. Moreover, any <code>options</code> page will show up in an index when using <code><a href="https://rdrr.io/r/base/options.html" class="external-link">?options</a></code> to search for documentation, making it easier to discover which packages have options for you to use.</p>
+<p>Which produces a <code>?mypackage::options</code> help page.
+Moreover, any <code>options</code> page will show up in an index when
+using <code><a href="https://rdrr.io/r/base/options.html" class="external-link">?options</a></code> to search for documentation, making it
+easier to discover which packages have options for you to use.</p>
 <pre><code>mypackage Options
 
 Description:
@@ -133,8 +147,11 @@ Options:
 
           envvar: R_MYPACKAGE_QUIET (raw)
 ...</code></pre>
-<p>When your options are used as default values to parameters, you can use the option documentation to populate your function parameter docs.</p>
-<p>This is made simple when all of your parameters share the same names as your options.</p>
+<p>When your options are used as default values to parameters, you can
+use the option documentation to populate your function parameter
+docs.</p>
+<p>This is made simple when all of your parameters share the same names
+as your options.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' @eval options::as_params()</span></span>
 <span><span class="co">#' @name options_params</span></span>
@@ -148,7 +165,11 @@ Options:
 <span><span class="va">count_to_three</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">quiet</span> <span class="op">=</span> <span class="fu"><a href="../reference/opt.html">opt</a></span><span class="op">(</span><span class="st">"quiet"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="va">quiet</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">i</span>, <span class="st">"\n"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>In situations where you have identically named parameters where you <em>don’t</em> want to inherit the option documentation, you can provide their names to <code>as_params</code> to use just a subset of options. You can also reassign documentation for an option to a parameter of a different name.</p>
+<p>In situations where you have identically named parameters where you
+<em>don’t</em> want to inherit the option documentation, you can provide
+their names to <code>as_params</code> to use just a subset of options.
+You can also reassign documentation for an option to a parameter of a
+different name.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' Hello World!</span></span>
 <span><span class="co">#'</span></span>
@@ -161,9 +182,17 @@ Options:
 <div class="section level2">
 <h2 id="customizing-behaviors">Customizing Behaviors<a class="anchor" aria-label="anchor" href="#customizing-behaviors"></a>
 </h2>
-<p>When using <code>define_option</code> you can set the <code>option_name</code> and <code>envvar_name</code> that will be used directly.</p>
-<p>But it can be tedious and typo-prone to write these out for each and every option. Instead, you might consider providing a function that sets the default format for your option and environment variable names.</p>
-<p>For this, you can use <code>set_option_name_fn</code> and <code>set_envvar_name_fn</code>, which each accept a function as an argument. This function accepts two arguments, a package name and internal option name, which it uses to produce and return the corresponding global option name or environment variable name.</p>
+<p>When using <code>define_option</code> you can set the
+<code>option_name</code> and <code>envvar_name</code> that will be used
+directly.</p>
+<p>But it can be tedious and typo-prone to write these out for each and
+every option. Instead, you might consider providing a function that sets
+the default format for your option and environment variable names.</p>
+<p>For this, you can use <code>set_option_name_fn</code> and
+<code>set_envvar_name_fn</code>, which each accept a function as an
+argument. This function accepts two arguments, a package name and
+internal option name, which it uses to produce and return the
+corresponding global option name or environment variable name.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">options</span><span class="fu">::</span><span class="fu"><a href="../reference/naming.html">set_option_name_fn</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">package</span>, <span class="va">name</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">tolower</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">package</span>, <span class="st">"."</span>, <span class="va">name</span><span class="op">)</span><span class="op">)</span></span>

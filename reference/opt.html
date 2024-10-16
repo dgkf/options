@@ -153,8 +153,8 @@ named option values.</p></li>
 subsequent calls are not called with <code>add = TRUE</code> (masking existing
 <a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit</a> callbacks). A more rigorous alternative might make use of
 <code><a href="https://withr.r-lib.org/reference/defer.html" class="external-link">withr::defer</a></code>.</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>old &lt;-<span class="st"> </span><span class="kw">opt_set</span>(<span class="st">"option"</span>, value)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>withr<span class="op">::</span><span class="kw">defer</span>(<span class="kw">opt_set</span>(<span class="st">"option"</span>, old))</span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>old <span class="ot">&lt;-</span> <span class="fu">opt_set</span>(<span class="st">"option"</span>, value)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>withr<span class="sc">::</span><span class="fu">defer</span>(<span class="fu">opt_set</span>(<span class="st">"option"</span>, old))</span></code></pre><p></p></div>
 <p>If you'd prefer to use this style, see <code>opts_list()</code>, which is designed
 to work nicely with <code><a href="https://withr.r-lib.org/reference/withr.html" class="external-link">withr</a></code>.</p>
     </div>

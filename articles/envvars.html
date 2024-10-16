@@ -53,11 +53,13 @@
 
 
 
-<script src="envvars_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+
+<div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Environment Variables</h1>
-            <h3 data-toc-skip class="subtitle">Customizing environment variable handling</h3>
+            <h3 data-toc-skip class="subtitle">Customizing environment
+variable handling</h3>
             
       
       <small class="dont-index">Source: <a href="https://github.com/dgkf/options/blob/HEAD/vignettes/envvars.Rmd" class="external-link"><code>vignettes/envvars.Rmd</code></a></small>
@@ -66,14 +68,25 @@
 
     
     
-<p>Environment variables can be a tremendously helpful alternative to options for behaviors that one might want to handle ubiquitously across R sessions, that might be administered, or that might be needed in a command-line context.</p>
-<p>They can provide a helpful interface for supporting tasks that might be called during continuous integration jobs, on a compute cluster, or within a containerized environment. Since use cases can be hard to predict, <code>options</code> will consider appropriately named environment variables by default.</p>
+<p>Environment variables can be a tremendously helpful alternative to
+options for behaviors that one might want to handle ubiquitously across
+R sessions, that might be administered, or that might be needed in a
+command-line context.</p>
+<p>They can provide a helpful interface for supporting tasks that might
+be called during continuous integration jobs, on a compute cluster, or
+within a containerized environment. Since use cases can be hard to
+predict, <code>options</code> will consider appropriately named
+environment variables by default.</p>
 <div class="section level2">
 <h2 id="customizing-names">Customizing names<a class="anchor" aria-label="anchor" href="#customizing-names"></a>
 </h2>
-<p>Perhaps the default environment names don’t suit you. When defining your options, you can always use your own! However, this level of customization is only available through the <code><a href="../reference/defining_options.html">define_option()</a></code> interface.</p>
+<p>Perhaps the default environment names don’t suit you. When defining
+your options, you can always use your own! However, this level of
+customization is only available through the <code><a href="../reference/defining_options.html">define_option()</a></code>
+interface.</p>
 <blockquote>
-<p>By default environment variables look like <code>R_&lt;PACKAGE&gt;_&lt;OPTION&gt;</code></p>
+<p>By default environment variables look like
+<code>R_&lt;PACKAGE&gt;_&lt;OPTION&gt;</code></p>
 </blockquote>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dgkf.github.io/options/" class="external-link">options</a></span><span class="op">)</span></span></code></pre></div>
@@ -107,7 +120,8 @@
 <code class="sourceCode R"><span><span class="fu">twist_and</span><span class="op">(</span><span class="op">)</span>  <span class="co"># by default, "shout"</span></span>
 <span><span class="co">#&gt; WELL, SHAKE IT UP, BABY, NOW (SHAKE IT UP, BABY)</span></span>
 <span><span class="co">#&gt; TWIST AND SHOUT (TWIST AND SHOUT)</span></span></code></pre></div>
-<p>We can now alter our behavior using the environment variable, <code>VOL</code>.</p>
+<p>We can now alter our behavior using the environment variable,
+<code>VOL</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>VOL <span class="op">=</span> <span class="st">"whisper"</span><span class="op">)</span></span>
 <span></span>
@@ -119,13 +133,20 @@
 <div class="section level2">
 <h2 id="setting-naming-rules">Setting Naming Rules<a class="anchor" aria-label="anchor" href="#setting-naming-rules"></a>
 </h2>
-<p>Although individually mapping options to environment variables is handy for one-off options, it can be tedious to do throughout your package, especially if you want all your variables to follow some consistent naming scheme.</p>
-<p>For this we can provide a function which is used to name all future options’ environment variables.</p>
+<p>Although individually mapping options to environment variables is
+handy for one-off options, it can be tedious to do throughout your
+package, especially if you want all your variables to follow some
+consistent naming scheme.</p>
+<p>For this we can provide a function which is used to name all future
+options’ environment variables.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/naming.html">set_envvar_name_fn</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">package</span>, <span class="va">name</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[^A-Z0-9]"</span>, <span class="st">"_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">toupper</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">package</span>, <span class="st">"_"</span>, <span class="va">name</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
-<p>Now any future option environment variables will use this convention when they are defined. Existing options will be unaffected until they are redefined, so it’s often best to make sure this code runs before you start defining options.</p>
+<p>Now any future option environment variables will use this convention
+when they are defined. Existing options will be unaffected until they
+are redefined, so it’s often best to make sure this code runs before you
+start defining options.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/defining_options.html">define_options</a></span><span class="op">(</span></span>
 <span>  <span class="st">"Print output in uppercase ('shout') or lowercase ('whisper')"</span>,</span>
@@ -139,14 +160,19 @@
 <span><span class="co">#&gt;  <span style="color: #555555;"> </span>option <span style="color: #555555;"> : </span><span style="color: #00BBBB;">globalenv.volume</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555;"> </span>envvar <span style="color: #555555;"> : </span><span style="color: #00BBBB;">GLOBALENV_VOLUME</span> (evaluated if possible, raw string otherwise)</span></span>
 <span><span class="co">#&gt;  <span style="color: #555555;">*</span><span style="color: #00BB00;">default</span><span style="color: #555555;"> : </span>"shout"</span></span></code></pre></div>
-<p>You’ll notice that our redefined option now uses our custom naming scheme for its environment variable.</p>
-<p>You can always write your own function, or choose from some of the pre-built ones in <code><a href="../reference/naming_formats.html">?naming_formats</a></code>.</p>
+<p>You’ll notice that our redefined option now uses our custom naming
+scheme for its environment variable.</p>
+<p>You can always write your own function, or choose from some of the
+pre-built ones in <code><a href="../reference/naming_formats.html">?naming_formats</a></code>.</p>
 </div>
 <div class="section level2">
 <h2 id="parsing-values">Parsing Values<a class="anchor" aria-label="anchor" href="#parsing-values"></a>
 </h2>
-<p>So far we’ve just been using the environment variable’s value as-is. Environment variable values, by default, will try to be parsed into R objects. If that fails, they’ll deliver the raw string value.</p>
-<p>This can be a nice default behavior, handling many simple cases as expected</p>
+<p>So far we’ve just been using the environment variable’s value as-is.
+Environment variable values, by default, will try to be parsed into R
+objects. If that fails, they’ll deliver the raw string value.</p>
+<p>This can be a nice default behavior, handling many simple cases as
+expected</p>
 <table class="table">
 <colgroup>
 <col width="49%">
@@ -198,9 +224,18 @@
 </tr>
 </tbody>
 </table>
-<p>But you’ll notice that a typo in our last example completely changed the type of data that is read in. Depending on the way that you intend to use this variable, perhaps this default is more error-prone than necessary.</p>
-<p>To help with this, there is a whole family of functions that allow you to customize the way that environment variables are internalized as option values (<code><a href="../reference/envvar_fns.html">?envvar_fns</a></code>). Generally, it’s best to keep these specific to the data type of the option that you intend to use - for example, using <code>envvar_is_true</code> to always coerce the value to a logical scalar.</p>
-<p>Just like before, these are used to specify your option’s behaviors:</p>
+<p>But you’ll notice that a typo in our last example completely changed
+the type of data that is read in. Depending on the way that you intend
+to use this variable, perhaps this default is more error-prone than
+necessary.</p>
+<p>To help with this, there is a whole family of functions that allow
+you to customize the way that environment variables are internalized as
+option values (<code><a href="../reference/envvar_fns.html">?envvar_fns</a></code>). Generally, it’s best to keep
+these specific to the data type of the option that you intend to use -
+for example, using <code>envvar_is_true</code> to always coerce the
+value to a logical scalar.</p>
+<p>Just like before, these are used to specify your option’s
+behaviors:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/defining_options.html">define_option</a></span><span class="op">(</span></span>
 <span>  <span class="st">"volume"</span>,</span>
@@ -221,7 +256,9 @@
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>Let’s put it all together. We’ll customize our environment variable name, and provide a custom <code>envvar_fn</code> which handles how we interpret the raw environment variable value.</p>
+<p>Let’s put it all together. We’ll customize our environment variable
+name, and provide a custom <code>envvar_fn</code> which handles how we
+interpret the raw environment variable value.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/defining_options.html">define_option</a></span><span class="op">(</span></span>
 <span>  <span class="st">"volume"</span>,</span>
@@ -246,10 +283,16 @@
 <span><span class="co">#&gt;  <span style="color: #555555;"> </span>envvar <span style="color: #555555;"> : </span><span style="color: #00BBBB;">VOL</span></span></span>
 <span><span class="co">#&gt;  <span style="color: #555555;">*</span><span style="color: #00BB00;">default</span><span style="color: #555555;"> : </span>1</span></span></code></pre></div>
 <blockquote>
-<p>Note that the <code><a href="../reference/envvar_fns.html">?envvar_fns</a></code> family of functions, like <code><a href="../reference/envvar_fns.html">envvar_choice_of()</a></code> return <em>functions</em>. Although this is a very powerful mechanism of customizing behaviors, it can look odd at first glance.</p>
-<p>We first generate our function by giving it which values to choose from (<code>envvar_choice_of(1:11)</code>), then use that function when we have our raw value (<code>choice_of_nums(raw)</code>).</p>
+<p>Note that the <code><a href="../reference/envvar_fns.html">?envvar_fns</a></code> family of functions, like
+<code><a href="../reference/envvar_fns.html">envvar_choice_of()</a></code> return <em>functions</em>. Although this
+is a very powerful mechanism of customizing behaviors, it can look odd
+at first glance.</p>
+<p>We first generate our function by giving it which values to choose
+from (<code>envvar_choice_of(1:11)</code>), then use that function when
+we have our raw value (<code>choice_of_nums(raw)</code>).</p>
 </blockquote>
-<p>Now we need to update our <code>twist_and</code> function to work with our newly consistent numeric volumes.</p>
+<p>Now we need to update our <code>twist_and</code> function to work
+with our newly consistent numeric volumes.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">twist_and_shout</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">vol</span> <span class="op">=</span> <span class="fu"><a href="../reference/opt.html">opt</a></span><span class="op">(</span><span class="st">"volume"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">lyric</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -298,7 +341,8 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>VOL <span class="op">=</span> <span class="st">"off"</span><span class="op">)</span>  <span class="co"># parsed as NULL</span></span>
 <span><span class="fu">twist_and_shout</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Error in twist_and_shout(): someone turned off the stereo</span></span></code></pre></div>
-<p>Looks pretty good! We handle just the inputs we want, without having to worry about unexpected data slipping into our R code.</p>
+<p>Looks pretty good! We handle just the inputs we want, without having
+to worry about unexpected data slipping into our R code.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
