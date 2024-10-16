@@ -1,7 +1,6 @@
 matrix:
   IMAGE: 
-    # r-hub/containers ubuntu-release
-    - ghcr.io/r-hub/containers/ubuntu-release
+    - rocker/verse
 
 when:
   - branch: "${CI_REPO_DEFAULT_BRANCH}"
