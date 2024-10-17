@@ -1,0 +1,183 @@
+matrix:
+  IMAGE: 
+    - rocker/verse
+
+when:
+  - branch: "${CI_REPO_DEFAULT_BRANCH}"
+    event: push
+  - event: pull_request
+  - event: tag
+
+variables:
+  site_config: &site_config
+    - export WOODPECKER_TMP=/woodpecker/tmp
+  r_site_config: &r_site_config
+    - cat /etc/os-release >> "$(R RHOME)/etc/Renviron.site"
+    - echo "WOODPECKER_TMP=/woodpecker/tmp" >> "$(R RHOME)/etc/Renviron.site"
+
+    - |
+      cat << END >> $(R RHOME)/etc/Rprofile.site
+      options(
+        Ncpus = 4,
+        repos = c(
+          "p3m.dev" = sprintf(
+            "https://p3m.dev/cran/__linux__/%s/latest",
+            if (nchar(envvar <- Sys.getenv("VERSION_CODENAME"))) envvar
+          ),
+          CRAN = "https://cloud.r-project.org"
+        ),
+        pak.sysreqs = TRUE,
+        cli.dynamic = FALSE,
+        cli.default_num_colors = 256,
+        crayon.enabled = TRUE
+      )
+
+      local({
+        tmp <- Sys.getenv("WOODPECKER_TMP")
+        if (!dir.exists(tmp)) dir.create(tmp, recursive = TRUE)
+
+        lib <- file.path("", "woodpecker", "lib")
+        if (!dir.exists(lib)) dir.create(lib, recursive = TRUE)
+
+        .libPaths(c(lib, .libPaths()))
+      })
+
+      END
+
+steps:
+  - name: setup
+    image: ${IMAGE}
+    pull: true
+    commands:
+      - <<: *r_site_config
+      - |
+        R -q -s --no-save << "END"
+        pak_repo <- sprintf(
+          "https://r-lib.github.io/p/pak/stable/%s/%s/%s",
+          .Platform$pkgType,
+          R.Version()$os,
+          R.Version()$arch
+        )
+
+        install.packages("pak", repos = pak_repo)
+        pak::local_install_dev_deps()
+        END
+
+  - name: check
+    image: ${IMAGE}
+    depends_on: [setup]
+    pull: true
+    commands:
+      - <<: *r_site_config
+      - |
+        R -q -s --no-save << "END"
+        if (Sys.getenv("_R_CHECK_FORCE_SUGGESTS_", "") == "")
+          Sys.setenv("_R_CHECK_FORCE_SUGGESTS_" = "false")
+
+        if (Sys.getenv("_R_CHECK_CRAN_INCOMING_", "") == "")
+          Sys.setenv("_R_CHECK_CRAN_INCOMING_" = "false")
+
+        # CRAN OMP thread limit (https://stackoverflow.com/a/77323812)
+        # Resolves issue with R CMD check for CPU time exceeding elapsed time
+        Sys.setenv("OMP_THREAD_LIMIT" = 2)
+
+        pak::local_install_dev_deps()
+        pak::pkg_install("rcmdcheck")
+        rcmdcheck::rcmdcheck(
+          args = c(
+            "--no-manual",
+            "--as-cran",
+            "--no-tests",
+            "--timings"
+          ),
+          build_args = c(
+            "--no-manual"
+          ),
+          error_on = "warning",
+          check_dir = "check"
+        )
+        END
+
+  - name: test
+    image: ${IMAGE}
+    depends_on: [setup]
+    pull: true
+    commands:
+      - <<: *r_site_config
+      - |
+        R -q -s --no-save << "END"
+        pak::local_install_dev_deps()
+        pak::pkg_install(c("covr", "xml2"))
+
+        woodpecker_tmp <- normalizePath(Sys.getenv("WOODPECKER_TMP"), winslash = "/")
+        woodpecker_package <- file.path(woodpecker_tmp, "package")
+
+        cov <- covr::package_coverage(
+          quiet = FALSE,
+          clean = FALSE,
+          install_path = woodpecker_package
+        )
+
+        woodpecker_cobertura_xml <- file.path(woodpecker_tmp, "cobertura.xml")
+        covr::to_cobertura(cov, filename = woodpecker_cobertura_xml)
+        END
+      - |
+        echo '─ test results ────────────────────────────────────────────────────────────────'
+        find '/woodpecker/tmp/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
+
+  - name: pkgdown
+    image: ${IMAGE}
+    depends_on: [setup]
+    commands:
+      - <<: *r_site_config
+      - |
+        R -q -s --no-save << "END"
+        pak::local_install_dev_deps()
+        pak::pkg_install(".")
+        pak::pkg_install("pkgdown")
+        woodpecker_tmp <- normalizePath(Sys.getenv("WOODPECKER_TMP"), winslash = "/")
+        woodpecker_pages <- file.path(woodpecker_tmp, "pages")
+        pkg <- pkgdown::as_pkgdown(".", override = list(destination = woodpecker_pages))
+        pkgdown::build_site(pkg, new_process = FALSE, install = FALSE)
+        END
+
+  - name: deploy
+    image: alpine/git
+    depends_on: [pkgdown]
+    when:
+      - branch: "${CI_REPO_DEFAULT_BRANCH}"
+        event: push
+    secrets:
+      # expects woodpecker ci ssh access
+      #   - generated with `ssh-keygen -t ed25519 -f /tmp/key`
+      #   - private key: store as woodpecker ci secret `deploy_ssh_key`,
+      #     optionally set only accessible in `alpine/git` image
+      #   - public key: provide as a Deploy Key in codeberg repository
+      #     settings, granting write access to repository
+      - deploy_ssh_key
+    commands:
+      - <<: *site_config
+      - export GIT_USER_NAME=$$(git log -1 --pretty=format:'%an')
+      - export GIT_USER_EMAIL=$$(git log -1 --pretty=format:'%ae')
+
+      # set up ssh key, apply known hosts
+      - eval $(ssh-agent -s)
+      - echo "$${DEPLOY_SSH_KEY}" | ssh-add -
+      - mkdir -p ~/.ssh
+      - ssh-keyscan -H codeberg.org >> ~/.ssh/known_hosts
+
+      # clone repo, create new branch, copy in pages
+      - git clone --depth 1 $${CI_REPO_CLONE_SSH_URL} $${WOODPECKER_TMP}/deploy
+      - cd $${WOODPECKER_TMP}/deploy
+      - git switch --orphan pages
+      - git pull origin pages || echo "pages branch not found, creating ..."
+      - git rm --cached --ignore-unmatch -r .
+      - cp -r $${WOODPECKER_TMP}/pages/* .
+
+      # commit new pages contents & deploy
+      - git add -A
+      - git config --global user.name $${GIT_USER_NAME}
+      - git config --global user.email $${GIT_USER_EMAIL}
+      - git commit -m "deploy to pages from $${CI_COMMIT_BRANCH} @ $${CI_COMMIT_SHA:0:8}"
+      - git push origin pages
+

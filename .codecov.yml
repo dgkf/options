@@ -1,0 +1,4 @@
+codecov:
+  ci:
+    - codeberg.org
+    - ci.codeberg.org

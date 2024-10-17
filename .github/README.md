@@ -14,7 +14,7 @@ by improving our collective software stack. Codeberg is an alternative to
 GitHub that is better aligned with this perspective.
 
 Codeberg is based on a fully open-source stack, is run by a non-profit,
-and has no other anscillary for-profit products that it is trying to sell using
+and has no other ancillary for-profit products that it is trying to sell using
 its platform.
 
 ## Why migrate `options`?
