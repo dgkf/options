@@ -82,5 +82,6 @@ test_that("envvar_is_set always returns TRUE (unset condition handled elsewhere)
 
 test_that("envvar_str_split splits raw string on delimiter", {
   expect_equal(envvar_str_split()("a;b;c"), c("a", "b", "c"))
+  expect_equal(envvar_str_split(delim = "-")("a-b-c"), c("a", "b", "c"))
   expect_equal(envvar_str_split()("a"), c("a"))
 })

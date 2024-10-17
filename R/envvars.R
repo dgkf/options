@@ -258,7 +258,7 @@ envvar_is_set <- function(...) {
 #' @export
 envvar_str_split <- function(delim = ";", ...) {
   fn_with_desc(
-    function(raw, ...) trimws(strsplit(raw, ";")[[1L]]),
+    function(raw, ...) trimws(strsplit(raw, delim)[[1L]]),
     sprintf("as character vector, split on '%s' delimiter", delim)
   )
 }
