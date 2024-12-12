@@ -8,4 +8,5 @@
 
 ^inst/options\.example/man$
 
-^.woodpecker
+^\.woodpecker$
+^\.codecov\.yml$
