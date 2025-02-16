@@ -22,7 +22,7 @@ variables:
 
     # CRAN OMP thread limit (https://stackoverflow.com/a/77323812)
     # Resolves issue with R CMD check for CPU time exceeding elapsed time
-    OMP_THREAD_LIMIT: 2,
+    OMP_THREAD_LIMIT: 2
     
   r_site_config: &r_site_config
     # These environment variables used to help find appropriate binaries in PPM
