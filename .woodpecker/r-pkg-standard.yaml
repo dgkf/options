@@ -224,4 +224,3 @@ steps:
       - git config --global user.email $${GIT_USER_EMAIL}
       - git commit -m "deploy to pages from $${CI_COMMIT_BRANCH} @ $${CI_COMMIT_SHA:0:8}"
       - git push origin pages
-
