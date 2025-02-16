@@ -156,6 +156,7 @@ steps:
     depends_on: [pkgdown]
     when:
       - branch: "${CI_REPO_DEFAULT_BRANCH}"
+        evaluate: "DEPLOY_SSH_KEY != nil"
         event: push
     environment:
       <<: *r_envvars
