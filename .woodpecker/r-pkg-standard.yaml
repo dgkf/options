@@ -148,7 +148,6 @@ steps:
     when:
       - branch: "${CI_REPO_DEFAULT_BRANCH}"
         event: push
-      - evaluate: 'DEPLOY_SSH_KEY != nil'
     environment:
       DEPLOY_SSH_KEY:
         # expects woodpecker ci ssh access
