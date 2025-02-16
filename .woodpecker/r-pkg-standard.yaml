@@ -11,13 +11,6 @@ when:
   - event: pull_request
   - event: tag
 
-steps:
-  - <<: *setup
-  - <<: *check
-  - <<: *test
-  - <<: *pkgdown
-  # - <<: *deploy
-
 variables:
   site_config: &site_config
     - export WOODPECKER_TMP=/woodpecker/tmp
@@ -231,3 +224,9 @@ variables:
         - git commit -m "deploy to pages from $${CI_COMMIT_BRANCH} @ $${CI_COMMIT_SHA:0:8}"
         - git push origin pages
         
+steps:
+  - <<: *setup
+  - <<: *check
+  - <<: *test
+  - <<: *pkgdown
+  # - <<: *deploy
