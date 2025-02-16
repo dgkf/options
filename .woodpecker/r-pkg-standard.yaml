@@ -12,16 +12,17 @@ when:
   - event: tag
 
 variables:
-  R_NCPU: 1
-  _R_CHECK_FORCE_SUGGESTS_: "false"
-  _R_CHECK_CRAN_INCOMING_: "false"
-
-  # CRAN OMP thread limit (https://stackoverflow.com/a/77323812)
-  # Resolves issue with R CMD check for CPU time exceeding elapsed time
-  OMP_THREAD_LIMIT: 2,
-
   site_config: &site_config
     - export WOODPECKER_TMP=/woodpecker/tmp
+
+  r_envvars: &r_envvars
+    R_NCPU: 1
+    _R_CHECK_FORCE_SUGGESTS_: "false"
+    _R_CHECK_CRAN_INCOMING_: "false"
+
+    # CRAN OMP thread limit (https://stackoverflow.com/a/77323812)
+    # Resolves issue with R CMD check for CPU time exceeding elapsed time
+    OMP_THREAD_LIMIT: 2,
     
   r_site_config: &r_site_config
     # These environment variables used to help find appropriate binaries in PPM
@@ -66,6 +67,8 @@ steps:
   - name: setup
     image: ${IMAGE}
     pull: true
+    environment:
+      <<: *r_envvars
     commands:
       - <<: *r_site_config
       - |
@@ -85,6 +88,8 @@ steps:
     image: ${IMAGE}
     depends_on: [setup]
     pull: true
+    environment:
+      <<: *r_envvars
     commands:
       - <<: *r_site_config
       - |
@@ -103,6 +108,8 @@ steps:
     image: ${IMAGE}
     depends_on: [setup]
     pull: true
+    environment:
+      <<: *r_envvars
     commands:
       - <<: *r_site_config
       - |
@@ -129,6 +136,8 @@ steps:
   - name: pkgdown
     image: ${IMAGE}
     depends_on: [setup]
+    environment:
+      <<: *r_envvars
     commands:
       - <<: *r_site_config
       - |
@@ -149,6 +158,7 @@ steps:
       - branch: "${CI_REPO_DEFAULT_BRANCH}"
         event: push
     environment:
+      <<: *r_envvars
       DEPLOY_SSH_KEY:
         # expects woodpecker ci ssh access
         #   - generated with `ssh-keygen -t ed25519 -f /tmp/key`
