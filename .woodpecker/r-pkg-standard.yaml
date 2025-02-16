@@ -1,3 +1,6 @@
+# this workflow maintained at https://codeberg.org/r-codeberg/woodpecker-ci
+# please file bug reports and feature requests to help it improve!
+
 matrix:
   IMAGE: 
     - rocker/verse
@@ -9,16 +12,31 @@ when:
   - event: tag
 
 variables:
+  R_NCPU: 1
+  _R_CHECK_FORCE_SUGGESTS_: "false"
+  _R_CHECK_CRAN_INCOMING_: "false"
+
+  # CRAN OMP thread limit (https://stackoverflow.com/a/77323812)
+  # Resolves issue with R CMD check for CPU time exceeding elapsed time
+  OMP_THREAD_LIMIT: 2,
+
   site_config: &site_config
     - export WOODPECKER_TMP=/woodpecker/tmp
+    
   r_site_config: &r_site_config
+    # These environment variables used to help find appropriate binaries in PPM
     - cat /etc/os-release >> "$(R RHOME)/etc/Renviron.site"
+
+    # Store our temporary directory, accessible across workflow steps
     - echo "WOODPECKER_TMP=/woodpecker/tmp" >> "$(R RHOME)/etc/Renviron.site"
 
+    # Configure R profile to use during ci
+    # - sets options used throughout workflow
+    # - configures a package library that will be re-used by each step
     - |
       cat << END >> $(R RHOME)/etc/Rprofile.site
       options(
-        Ncpus = 4,
+        Ncpus = Sys.getenv("R_NCPU", unset = getOption("Ncpus", 1L)),
         repos = c(
           "p3m.dev" = sprintf(
             "https://p3m.dev/cran/__linux__/%s/latest",
@@ -27,6 +45,8 @@ variables:
           CRAN = "https://cloud.r-project.org"
         ),
         pak.sysreqs = TRUE,
+
+        # these settings used to provide prettier ci log output
         cli.dynamic = FALSE,
         cli.default_num_colors = 256,
         crayon.enabled = TRUE
@@ -35,10 +55,8 @@ variables:
       local({
         tmp <- Sys.getenv("WOODPECKER_TMP")
         if (!dir.exists(tmp)) dir.create(tmp, recursive = TRUE)
-
         lib <- file.path("", "woodpecker", "lib")
         if (!dir.exists(lib)) dir.create(lib, recursive = TRUE)
-
         .libPaths(c(lib, .libPaths()))
       })
 
@@ -71,28 +89,11 @@ steps:
       - <<: *r_site_config
       - |
         R -q -s --no-save << "END"
-        if (Sys.getenv("_R_CHECK_FORCE_SUGGESTS_", "") == "")
-          Sys.setenv("_R_CHECK_FORCE_SUGGESTS_" = "false")
-
-        if (Sys.getenv("_R_CHECK_CRAN_INCOMING_", "") == "")
-          Sys.setenv("_R_CHECK_CRAN_INCOMING_" = "false")
-
-        # CRAN OMP thread limit (https://stackoverflow.com/a/77323812)
-        # Resolves issue with R CMD check for CPU time exceeding elapsed time
-        Sys.setenv("OMP_THREAD_LIMIT" = 2)
-
         pak::local_install_dev_deps()
         pak::pkg_install("rcmdcheck")
         rcmdcheck::rcmdcheck(
-          args = c(
-            "--no-manual",
-            "--as-cran",
-            "--no-tests",
-            "--timings"
-          ),
-          build_args = c(
-            "--no-manual"
-          ),
+          args = c("--no-manual", "--as-cran", "--no-tests", "--timings"),
+          build_args = c("--no-manual"),
           error_on = "warning",
           check_dir = "check"
         )
@@ -145,6 +146,7 @@ steps:
     image: alpine/git
     depends_on: [pkgdown]
     when:
+      - evaluate: 'DEPLOY_SSH_KEY != nil'
       - branch: "${CI_REPO_DEFAULT_BRANCH}"
         event: push
     environment:
@@ -158,6 +160,35 @@ steps:
         from_secret: deploy_ssh_key
     commands:
       - <<: *site_config
+
+      # check that ssh key is provided as a secret
+      - |
+        if [ -z "$${DEPLOY_SSH_KEY}" ]; then
+        echo '
+        Whoops! It looks like you have yet to configure your SSH secrets.
+
+        Woodpecker CI needs to be able to push to your repo in order to deploy
+        Codeberg pages. To do this, we will generate an SSH key pair, storing
+        the private key as a Woodpecker secret and the public key as a deploy
+        key in Codeberg.
+
+        Steps:
+        1. Generate an SSH key pair (see resources below for commands)
+        2. Store the private key on https://ci.codeberg.org/user/secrets with
+           the name `deploy_ssh_key`.
+        3. Store the public key in your repository settings under "Deploy Keys"
+
+        Resources:
+        * Generating an SSH key pair
+          https://docs.codeberg.org/security/ssh-key/#generating-an-ssh-key-pair
+        * Configuring woodpecker secrets
+          https://woodpecker-ci.org/docs/usage/secrets
+        * Configuring codeberg Deploy Keys
+        '
+        exit 1;
+        fi;
+
+      # copy author details of last commit
       - export GIT_USER_NAME=$$(git log -1 --pretty=format:'%an')
       - export GIT_USER_EMAIL=$$(git log -1 --pretty=format:'%ae')
 
@@ -181,4 +212,3 @@ steps:
       - git config --global user.email $${GIT_USER_EMAIL}
       - git commit -m "deploy to pages from $${CI_COMMIT_BRANCH} @ $${CI_COMMIT_SHA:0:8}"
       - git push origin pages
-
