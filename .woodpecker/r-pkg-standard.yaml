@@ -11,6 +11,13 @@ when:
   - event: pull_request
   - event: tag
 
+steps:
+  - <<: *setup
+  - <<: *check
+  - <<: *test
+  - <<: *pkgdown
+  # - <<: *deploy
+
 variables:
   site_config: &site_config
     - export WOODPECKER_TMP=/woodpecker/tmp
@@ -63,164 +70,164 @@ variables:
         if (!dir.exists(lib)) dir.create(lib, recursive = TRUE)
         .libPaths(c(lib, .libPaths()))
       })
-
       END
 
-steps:
-  - name: setup
-    image: ${IMAGE}
-    pull: true
-    environment:
-      <<: *r_envvars
-    commands:
-      - <<: *r_site_config
-      - |
-        R -q -s --no-save << "END"
-        pak_repo <- sprintf(
-          "https://r-lib.github.io/p/pak/stable/%s/%s/%s",
-          .Platform$pkgType,
-          R.Version()$os,
-          R.Version()$arch
-        )
+  step_setup: &setup
+    - name: setup
+      image: ${IMAGE}
+      pull: true
+      environment:
+        <<: *r_envvars
+      commands:
+        - <<: *r_site_config
+        - |
+          R -q -s --no-save << "END"
+          pak_repo <- sprintf(
+            "https://r-lib.github.io/p/pak/stable/%s/%s/%s",
+            .Platform$pkgType,
+            R.Version()$os,
+            R.Version()$arch
+          )
 
-        install.packages("pak", repos = pak_repo)
-        pak::local_install_dev_deps()
-        END
+          install.packages("pak", repos = pak_repo)
+          pak::local_install_dev_deps()
+          END
 
-  - name: check
-    image: ${IMAGE}
-    depends_on: [setup]
-    pull: true
-    environment:
-      <<: *r_envvars
-    commands:
-      - <<: *r_site_config
-      - |
-        R -q -s --no-save << "END"
-        pak::local_install_dev_deps()
-        pak::pkg_install("rcmdcheck")
-        rcmdcheck::rcmdcheck(
-          args = c("--no-manual", "--as-cran", "--no-tests", "--timings"),
-          build_args = c("--no-manual"),
-          check_dir = "check"
-        )
-        END
+  step_check: &check
+    - name: check
+      image: ${IMAGE}
+      depends_on: [setup]
+      pull: true
+      environment:
+        <<: *r_envvars
+      commands:
+        - <<: *r_site_config
+        - |
+          R -q -s --no-save << "END"
+          pak::local_install_dev_deps()
+          pak::pkg_install("rcmdcheck")
+          rcmdcheck::rcmdcheck(
+            args = c("--no-manual", "--as-cran", "--no-tests", "--timings"),
+            build_args = c("--no-manual"),
+            check_dir = "check"
+          )
+          END
 
-  - name: test
-    image: ${IMAGE}
-    depends_on: [setup]
-    pull: true
-    environment:
-      <<: *r_envvars
-    commands:
-      - <<: *r_site_config
-      - |
-        R -q -s --no-save << "END"
-        pak::local_install_dev_deps()
-        pak::pkg_install(c("covr", "xml2"))
+  step_test: &test
+    - name: test
+      image: ${IMAGE}
+      depends_on: [setup]
+      pull: true
+      environment:
+        <<: *r_envvars
+      commands:
+        - <<: *r_site_config
+        - |
+          R -q -s --no-save << "END"
+          pak::local_install_dev_deps()
+          pak::pkg_install(c("covr", "xml2"))
 
-        woodpecker_tmp <- normalizePath(Sys.getenv("WOODPECKER_TMP"), winslash = "/")
-        woodpecker_package <- file.path(woodpecker_tmp, "package")
+          woodpecker_tmp <- normalizePath(Sys.getenv("WOODPECKER_TMP"), winslash = "/")
+          woodpecker_package <- file.path(woodpecker_tmp, "package")
 
-        cov <- covr::package_coverage(
-          quiet = FALSE,
-          clean = FALSE,
-          install_path = woodpecker_package
-        )
+          cov <- covr::package_coverage(
+            quiet = FALSE,
+            clean = FALSE,
+            install_path = woodpecker_package
+          )
 
-        woodpecker_cobertura_xml <- file.path(woodpecker_tmp, "cobertura.xml")
-        covr::to_cobertura(cov, filename = woodpecker_cobertura_xml)
-        END
-      - |
-        echo '─ test results ────────────────────────────────────────────────────────────────'
-        find '/woodpecker/tmp/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
+          woodpecker_cobertura_xml <- file.path(woodpecker_tmp, "cobertura.xml")
+          covr::to_cobertura(cov, filename = woodpecker_cobertura_xml)
+          END
+        - |
+          echo '─ test results ────────────────────────────────────────────────────────────────'
+          find '/woodpecker/tmp/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
 
-  - name: pkgdown
-    image: ${IMAGE}
-    depends_on: [setup]
-    environment:
-      <<: *r_envvars
-    commands:
-      - <<: *r_site_config
-      - |
-        R -q -s --no-save << "END"
-        pak::local_install_dev_deps()
-        pak::pkg_install(".")
-        pak::pkg_install("pkgdown")
-        woodpecker_tmp <- normalizePath(Sys.getenv("WOODPECKER_TMP"), winslash = "/")
-        woodpecker_pages <- file.path(woodpecker_tmp, "pages")
-        pkg <- pkgdown::as_pkgdown(".", override = list(destination = woodpecker_pages))
-        pkgdown::build_site(pkg, new_process = FALSE, install = FALSE)
-        END
+  step_pkgdown: &pkgdown
+    - name: pkgdown
+      image: ${IMAGE}
+      depends_on: [setup]
+      environment:
+        <<: *r_envvars
+      commands:
+        - <<: *r_site_config
+        - |
+          R -q -s --no-save << "END"
+          pak::local_install_dev_deps()
+          pak::pkg_install(".")
+          pak::pkg_install("pkgdown")
+          woodpecker_tmp <- normalizePath(Sys.getenv("WOODPECKER_TMP"), winslash = "/")
+          woodpecker_pages <- file.path(woodpecker_tmp, "pages")
+          pkg <- pkgdown::as_pkgdown(".", override = list(destination = woodpecker_pages))
+          pkgdown::build_site(pkg, new_process = FALSE, install = FALSE)
+          END
 
-  - name: deploy
-    image: alpine/git
-    depends_on: [pkgdown]
-    when:
-      - branch: "${CI_REPO_DEFAULT_BRANCH}"
-        evaluate: "DEPLOY_SSH_KEY != nil"
-        event: push
-    environment:
-      <<: *r_envvars
-      DEPLOY_SSH_KEY:
-        # expects woodpecker ci ssh access
-        #   - generated with `ssh-keygen -t ed25519 -f /tmp/key`
-        #   - private key: store as woodpecker ci secret `deploy_ssh_key`,
-        #     optionally set only accessible in `alpine/git` image
-        #   - public key: provide as a Deploy Key in codeberg repository
-        #     settings, granting write access to repository
-        from_secret: deploy_ssh_key
-    commands:
-      - <<: *site_config
+  step_deploy: &deploy
+    - name: deploy
+      image: alpine/git
+      depends_on: [pkgdown]
+      when:
+        - branch: "${CI_REPO_DEFAULT_BRANCH}"
+          evaluate: "DEPLOY_SSH_KEY != nil"
+          event: push
+      environment:
+        <<: *r_envvars
+        DEPLOY_SSH_KEY:
+          # expects woodpecker ci ssh access
+          #   - generated with `ssh-keygen -t ed25519 -f /tmp/key`
+          #   - private key: store as woodpecker ci secret `deploy_ssh_key`,
+          #     optionally set only accessible in `alpine/git` image
+          #   - public key: provide as a Deploy Key in codeberg repository
+          #     settings, granting write access to repository
+          from_secret: deploy_ssh_key
+      commands:
+        - <<: *site_config
+        # check that ssh key is provided as a secret
+        - |
+          if [ -z "$${DEPLOY_SSH_KEY}" ]; then
+          echo '
+          Whoops! It looks like you have yet to configure your SSH secrets.
+          Woodpecker CI needs to be able to push to your repo in order to deploy
+          Codeberg pages. To do this, we will generate an SSH key pair, storing
+          the private key as a Woodpecker secret and the public key as a deploy
+          key in Codeberg.
+          Steps:
+          1. Generate an SSH key pair (see resources below for commands)
+          2. Store the private key on https://ci.codeberg.org/user/secrets with
+             the name `deploy_ssh_key`.
+          3. Store the public key in your repository settings under "Deploy Keys"
+          Resources:
+          * Generating an SSH key pair
+            https://docs.codeberg.org/security/ssh-key/#generating-an-ssh-key-pair
+          * Configuring woodpecker secrets
+            https://woodpecker-ci.org/docs/usage/secrets
+          * Configuring codeberg Deploy Keys
+          '
+          exit 1;
+          fi;
 
-      # check that ssh key is provided as a secret
-      - |
-        if [ -z "$${DEPLOY_SSH_KEY}" ]; then
-        echo '
-        Whoops! It looks like you have yet to configure your SSH secrets.
+        # copy author details of last commit
+        - export GIT_USER_NAME=$$(git log -1 --pretty=format:'%an')
+        - export GIT_USER_EMAIL=$$(git log -1 --pretty=format:'%ae')
 
-        Woodpecker CI needs to be able to push to your repo in order to deploy
-        Codeberg pages. To do this, we will generate an SSH key pair, storing
-        the private key as a Woodpecker secret and the public key as a deploy
-        key in Codeberg.
+        # set up ssh key, apply known hosts
+        - eval $(ssh-agent -s)
+        - echo "$${DEPLOY_SSH_KEY}" | ssh-add -
+        - mkdir -p ~/.ssh
+        - ssh-keyscan -H codeberg.org >> ~/.ssh/known_hosts
 
-        Steps:
-        1. Generate an SSH key pair (see resources below for commands)
-        2. Store the private key on https://ci.codeberg.org/user/secrets with
-           the name `deploy_ssh_key`.
-        3. Store the public key in your repository settings under "Deploy Keys"
+        # clone repo, create new branch, copy in pages
+        - git clone --depth 1 $${CI_REPO_CLONE_SSH_URL} $${WOODPECKER_TMP}/deploy
+        - cd $${WOODPECKER_TMP}/deploy
+        - git switch --orphan pages
+        - git pull origin pages || echo "pages branch not found, creating ..."
+        - git rm --cached --ignore-unmatch -r .
+        - cp -r $${WOODPECKER_TMP}/pages/* .
 
-        Resources:
-        * Generating an SSH key pair
-          https://docs.codeberg.org/security/ssh-key/#generating-an-ssh-key-pair
-        * Configuring woodpecker secrets
-          https://woodpecker-ci.org/docs/usage/secrets
-        * Configuring codeberg Deploy Keys
-        '
-        exit 1;
-        fi;
-
-      # copy author details of last commit
-      - export GIT_USER_NAME=$$(git log -1 --pretty=format:'%an')
-      - export GIT_USER_EMAIL=$$(git log -1 --pretty=format:'%ae')
-
-      # set up ssh key, apply known hosts
-      - eval $(ssh-agent -s)
-      - echo "$${DEPLOY_SSH_KEY}" | ssh-add -
-      - mkdir -p ~/.ssh
-      - ssh-keyscan -H codeberg.org >> ~/.ssh/known_hosts
-
-      # clone repo, create new branch, copy in pages
-      - git clone --depth 1 $${CI_REPO_CLONE_SSH_URL} $${WOODPECKER_TMP}/deploy
-      - cd $${WOODPECKER_TMP}/deploy
-      - git switch --orphan pages
-      - git pull origin pages || echo "pages branch not found, creating ..."
-      - git rm --cached --ignore-unmatch -r .
-      - cp -r $${WOODPECKER_TMP}/pages/* .
-
-      # commit new pages contents & deploy
-      - git add -A
-      - git config --global user.name $${GIT_USER_NAME}
-      - git config --global user.email $${GIT_USER_EMAIL}
-      - git commit -m "deploy to pages from $${CI_COMMIT_BRANCH} @ $${CI_COMMIT_SHA:0:8}"
-      - git push origin pages
+        # commit new pages contents & deploy
+        - git add -A
+        - git config --global user.name $${GIT_USER_NAME}
+        - git config --global user.email $${GIT_USER_EMAIL}
+        - git commit -m "deploy to pages from $${CI_COMMIT_BRANCH} @ $${CI_COMMIT_SHA:0:8}"
+        - git push origin pages
+        
