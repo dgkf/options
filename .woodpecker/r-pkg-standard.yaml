@@ -175,30 +175,6 @@ variables:
           from_secret: deploy_ssh_key
       commands:
         - <<: *site_config
-        # check that ssh key is provided as a secret
-        - |
-          if [ -z "$${DEPLOY_SSH_KEY}" ]; then
-          echo '
-          Whoops! It looks like you have yet to configure your SSH secrets.
-          Woodpecker CI needs to be able to push to your repo in order to deploy
-          Codeberg pages. To do this, we will generate an SSH key pair, storing
-          the private key as a Woodpecker secret and the public key as a deploy
-          key in Codeberg.
-          Steps:
-          1. Generate an SSH key pair (see resources below for commands)
-          2. Store the private key on https://ci.codeberg.org/user/secrets with
-             the name `deploy_ssh_key`.
-          3. Store the public key in your repository settings under "Deploy Keys"
-          Resources:
-          * Generating an SSH key pair
-            https://docs.codeberg.org/security/ssh-key/#generating-an-ssh-key-pair
-          * Configuring woodpecker secrets
-            https://woodpecker-ci.org/docs/usage/secrets
-          * Configuring codeberg Deploy Keys
-          '
-          exit 1;
-          fi;
-
         # copy author details of last commit
         - export GIT_USER_NAME=$$(git log -1 --pretty=format:'%an')
         - export GIT_USER_EMAIL=$$(git log -1 --pretty=format:'%ae')
@@ -229,4 +205,4 @@ steps:
   - <<: *check
   - <<: *test
   - <<: *pkgdown
-  # - <<: *deploy
+  - <<: *deploy
