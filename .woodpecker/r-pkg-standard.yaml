@@ -19,6 +19,7 @@ variables:
     R_NCPU: 1
     _R_CHECK_FORCE_SUGGESTS_: "false"
     _R_CHECK_CRAN_INCOMING_: "false"
+    _R_CHECK_SYSTEM_CLOCK_: "false"
 
     # CRAN OMP thread limit (https://stackoverflow.com/a/77323812)
     # Resolves issue with R CMD check for CPU time exceeding elapsed time
