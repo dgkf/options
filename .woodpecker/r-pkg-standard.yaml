@@ -17,6 +17,8 @@ variables:
 
   r_envvars: &r_envvars
     R_NCPU: 1
+    RCMDCHECK_ERROR_ON: "note"
+
     _R_CHECK_FORCE_SUGGESTS_: "false"
     _R_CHECK_CRAN_INCOMING_: "false"
     _R_CHECK_SYSTEM_CLOCK_: "false"
@@ -100,7 +102,6 @@ steps:
         rcmdcheck::rcmdcheck(
           args = c("--no-manual", "--as-cran", "--no-tests", "--timings"),
           build_args = c("--no-manual"),
-          error_on = "warning",
           check_dir = "check"
         )
         END
