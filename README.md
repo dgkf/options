@@ -159,3 +159,4 @@ options::set_envvar_name_fn(function(package, name) {
   gsub("[^A-Z0-9]", "_", toupper(paste0(package, "_", name)))
 })
 ```
+
