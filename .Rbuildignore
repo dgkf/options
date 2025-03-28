@@ -10,3 +10,5 @@
 
 ^\.woodpecker$
 ^\.codecov\.yml$
+
+\.Rcheck$

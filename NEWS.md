@@ -1,3 +1,17 @@
+# options 0.3.1
+
+## Bug Fixes
+
+* Fixed `define_options` when using a `NULL` default value. Previously,
+  the `NULL` value would not be recognized and would silently ignore the
+  option definition. (@dgkf #34)
+
+* Fixed `envvar_is.logical` (and thereby, `envvar_is_true`, `envvar_is_false`),
+  leveraging `as.logical` internally to make the parsing from strings align
+  more closely to what one may expect in R. Notably, all lowercase values
+  `true` and `false` will now be recognized as their respective logical values.
+  (@dgkf #34)
+
 # options 0.3.0
 
 * Introduces `opts_list()`, a utility for producing a list of option values with

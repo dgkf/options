@@ -19,6 +19,8 @@ test_that("envvar_is works for logicals", {
   expect_true(envvar_is(FALSE)("FALSE"))
   expect_false(envvar_is(TRUE)("1"))
   expect_false(envvar_is(TRUE)("0"))
+  expect_true(envvar_is(TRUE, case_sensitive = FALSE)("TrUe"))
+  expect_false(envvar_is(TRUE, case_sensitive = TRUE)("TrUe"))
 })
 
 test_that("envvar_is works for strings", {
@@ -63,6 +65,7 @@ test_that("envvar_choice_of returns value if in set, default otherwise", {
 test_that("envvar_is_true returns TRUE for truthy values", {
   expect_true(envvar_is_true()("TRUE"))
   expect_true(envvar_is_true()("True"))
+  expect_true(envvar_is_true()("true"))
   expect_true(envvar_is_true()("1"))
   expect_false(envvar_is_true()("other"))
   expect_false(envvar_is_true()("0"))
@@ -71,6 +74,7 @@ test_that("envvar_is_true returns TRUE for truthy values", {
 test_that("envvar_is_false returns TRUE for falsy values", {
   expect_true(envvar_is_false()("FALSE"))
   expect_true(envvar_is_false()("False"))
+  expect_true(envvar_is_false()("false"))
   expect_true(envvar_is_false()("0"))
   expect_false(envvar_is_false()("other"))
   expect_false(envvar_is_false()("1"))

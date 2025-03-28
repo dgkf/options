@@ -49,12 +49,13 @@ define_option <- function(option, ...) {
 #' @inheritParams option_spec
 #' @export
 define_option.character <- function(
-    option,
-    default = bquote(),
-    ...,
-    quoted = FALSE,
-    eager = FALSE,
-    envir = parent.frame()) {
+  option,
+  default = bquote(),
+  ...,
+  quoted = FALSE,
+  eager = FALSE,
+  envir = parent.frame()
+) {
   if (!missing(default) && !quoted && !eager) {
     default <- match.call()[["default"]]
   }
@@ -127,7 +128,7 @@ define_options <- function(...) {
     # reassign option name, default from second arg in group
     args <- list()
     args$name <- names(group[2])
-    args$default <- group[[2]]
+    args["default"] <- list(group[[2]])
 
     # build description from first (unnamed) arg in group
     args$desc <- reflow_option_desc(eval(group[[1]], envir = eval_env))[[1]]

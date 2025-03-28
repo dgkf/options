@@ -118,9 +118,12 @@ envvar_is.logical <- function(value, case_sensitive = FALSE, ...) {
   stopifnot(length(value) == 1)
   fn_with_desc(
     function(raw, ...) {
+      if (!case_sensitive) {
+        raw <- toupper(raw)
+      }
+
       tryCatch(
-        is.logical(raw <- eval(parse(text = toupper(raw)))) &&
-        identical(value, raw),
+        identical(value, as.logical(raw)),
         error = function(e) FALSE
       )
     },
