@@ -1,36 +1,11 @@
 on: [push]
 
 jobs:
-  "R CMD check":
-    runs-on: ${{ matrix.config.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          # - {os: macos-latest,   r: 'release'}
-          # - {os: windows-latest, r: 'release'}
-          # - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
-          - {os: ubuntu-latest,   r: 'release'}
-          # - {os: ubuntu-latest,   r: 'oldrel-1'}
-
+  wip:
+    runs-on: codeberg-tiny
     steps:
-      - uses: https://data.forgejo.org/actions/checkout@v4
+      - name: checkout
+        uses: https://data.forgejo.org/actions/checkout@v4
 
-      - uses: https://github.com/r-lib/actions/setup-pandoc@v2
-
-      - uses: https://github.com/r-lib/actions/setup-r@v2
-        with:
-          r-version: ${{ matrix.config.r }}
-          http-user-agent: ${{ matrix.config.http-user-agent }}
-          use-public-rspm: true
-
-      - uses: https://github.com/r-lib/actions/setup-r-dependencies@v2
-        with:
-          extra-packages: any::rcmdcheck
-          needs: check
-
-      - uses: https://github.com/r-lib/actions/check-r-package@v2
-        with:
-          upload-snapshots: true
-          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+      - name: list files
+        run: ls -al
